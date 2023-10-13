@@ -77,7 +77,11 @@ public final class DrawManager {
 		/** Destroyed enemy ship. */
 		Explosion,
 
-		Item
+		Item,
+
+		Life,
+
+		AuxiliaryShips
 	};
 
 	/**
@@ -103,7 +107,10 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
-			spriteMap.put(SpriteType.Item, new boolean[13][7]);
+			spriteMap.put(SpriteType.Item, new boolean[3][3]);
+			spriteMap.put(SpriteType.Life, new boolean[7][7]);
+			spriteMap.put(SpriteType.AuxiliaryShips, new boolean[12][8]);
+
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -273,9 +280,10 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
 		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
-		Ship dummyShip = new Ship(0, 0, SpriteType.Ship);
+		Ship dummyShip = new Ship(0, 0, SpriteType.Life);
+		dummyShip.setColor(Color.red);
 		for (int i = 0; i < lives; i++)
-			drawEntity(dummyShip, 40 + 35 * i, 10);
+			drawEntity(dummyShip, 40 + (35 - 5) * i, 10 + 3);
 	}
 
 	/**

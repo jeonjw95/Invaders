@@ -138,8 +138,8 @@ public class GameScreen extends Screen {
 		this.bullets = new HashSet<Bullet>();
 		this.items = new HashSet<Item>();
 
-		this.auxiliaryShips.add(new Ship(ship.getPositionX() - 30, ship.getPositionY(), DrawManager.SpriteType.EnemyShipA1));
-		this.auxiliaryShips.add(new Ship(ship.getPositionX() + 30, ship.getPositionY(), DrawManager.SpriteType.EnemyShipA1));
+		this.auxiliaryShips.add(new Ship(ship.getPositionX() - 25, ship.getPositionY(), DrawManager.SpriteType.AuxiliaryShips));
+		this.auxiliaryShips.add(new Ship(ship.getPositionX() + 25, ship.getPositionY(), DrawManager.SpriteType.AuxiliaryShips));
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -187,9 +187,9 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 				}
 				if (existAuxiliaryShips) {
-					auxiliaryShips.get(0).setPositionX(ship.getPositionX() - 30);
+					auxiliaryShips.get(0).setPositionX(ship.getPositionX() - 25);
 					auxiliaryShips.get(0).setPositionY(ship.getPositionY());
-					auxiliaryShips.get(1).setPositionX(ship.getPositionX() + 30);
+					auxiliaryShips.get(1).setPositionX(ship.getPositionX() + 25);
 					auxiliaryShips.get(1).setPositionY(ship.getPositionY());
 				}else{
 					auxiliaryShips.get(0).destroy();
