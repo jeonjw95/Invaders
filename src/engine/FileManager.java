@@ -68,10 +68,13 @@ public final class FileManager {
 	public void loadSprite(final Map<SpriteType, boolean[][]> spriteMap)
 			throws IOException {
 		InputStream inputStream = null;
+		InputStream inputStream2 = null;
 
 		try {
 			inputStream = DrawManager.class.getClassLoader()
 					.getResourceAsStream("graphics");
+			inputStream2 = DrawManager.class.getClassLoader()
+					.getResourceAsStream("boss");
 			char c;
 
 			// Sprite loading.
@@ -80,7 +83,10 @@ public final class FileManager {
 				for (int i = 0; i < sprite.getValue().length; i++)
 					for (int j = 0; j < sprite.getValue()[i].length; j++) {
 						do
-							c = (char) inputStream.read();
+							if (sprite.getKey() != SpriteType.BossA && sprite.getKey() != SpriteType.BossB && sprite.getKey() != SpriteType.BossC && sprite.getKey() != SpriteType.BossD && sprite.getKey() != SpriteType.BossExplosion)
+								c = (char) inputStream.read();
+							else
+								c = (char) inputStream2.read();
 						while (c != '0' && c != '1');
 
 						if (c == '1')
@@ -92,9 +98,13 @@ public final class FileManager {
 			}
 			if (inputStream != null)
 				inputStream.close();
+			if (inputStream2 != null)
+				inputStream2.close();
 		} finally {
 			if (inputStream != null)
 				inputStream.close();
+			if (inputStream2 != null)
+				inputStream2.close();
 		}
 	}
 

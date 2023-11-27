@@ -17,6 +17,8 @@ public class GameSettings {
 	/** Frequency of enemy shootings, +/- 30%. */
 	private int shootingFrecuency;
 
+	private int bossStage;
+
 	/**
 	 * Constructor.
 	 * 
@@ -35,6 +37,16 @@ public class GameSettings {
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
 		this.shootingFrecuency = shootingFrecuency;
+		this.bossStage = 0;
+	}
+
+	public GameSettings(final int formationWidth, final int formationHeight,
+						final int baseSpeed, final int shootingFrecuency, final int bossStage) {
+		this.formationWidth = formationWidth;
+		this.formationHeight = formationHeight;
+		this.baseSpeed = baseSpeed;
+		this.shootingFrecuency = shootingFrecuency;
+		this.bossStage = bossStage;
 	}
 
 	/**
@@ -63,6 +75,13 @@ public class GameSettings {
 	 */
 	public final int getShootingFrecuency() {
 		return shootingFrecuency;
+	}
+
+	/**
+	 * @return the bossStage
+	 */
+	public final int getBossStage() {
+		return bossStage;
 	}
 
 }
