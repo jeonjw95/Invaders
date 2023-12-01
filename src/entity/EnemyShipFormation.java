@@ -1,5 +1,6 @@
 package entity;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -95,6 +96,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Number of not destroyed ships. */
 	private int shipCount;
 
+	private int bossStage;
+
 	/** Directions the formation can move. */
 	private enum Direction {
 		/** Movement to the right side of the screen. */
@@ -123,6 +126,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
+		this.bossStage = gameSettings.getBossStage();
 		this.movementSpeed = this.baseSpeed;
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
@@ -136,21 +140,88 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < this.nShipsWide; i++)
 			this.enemyShips.add(new ArrayList<EnemyShip>());
 
-		for (List<EnemyShip> column : this.enemyShips) {
-			for (int i = 0; i < this.nShipsHigh; i++) {
-				if (i / (float) this.nShipsHigh < PROPORTION_C)
-					spriteType = SpriteType.EnemyShipC1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_B
-						+ PROPORTION_C)
-					spriteType = SpriteType.EnemyShipB1;
-				else
-					spriteType = SpriteType.EnemyShipA1;
+		if (bossStage == 0) {
+			for (List<EnemyShip> column : this.enemyShips) {
+				for (int i = 0; i < this.nShipsHigh; i++) {
+					if (i / (float) this.nShipsHigh < PROPORTION_C)
+						spriteType = SpriteType.EnemyShipC1;
+					else if (i / (float) this.nShipsHigh < PROPORTION_B
+							+ PROPORTION_C)
+						spriteType = SpriteType.EnemyShipB1;
+					else
+						spriteType = SpriteType.EnemyShipA1;
 
-				column.add(new EnemyShip((SEPARATION_DISTANCE 
-						* this.enemyShips.indexOf(column))
-								+ positionX, (SEPARATION_DISTANCE * i)
-								+ positionY, spriteType));
-				this.shipCount++;
+					column.add(new EnemyShip((SEPARATION_DISTANCE
+							* this.enemyShips.indexOf(column))
+							+ positionX, (SEPARATION_DISTANCE * i)
+							+ positionY, spriteType));
+					this.shipCount++;
+				}
+			}
+		}
+		else {
+			for (List<EnemyShip> column : this.enemyShips) {
+				for (int i = 0; i < this.nShipsHigh; i++) {
+					switch (this.bossStage)
+					{
+						case 1:
+							spriteType = SpriteType.BossA;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 209, spriteType, Color.WHITE));
+							this.shipCount++;
+							break;
+						case 2:
+							spriteType = SpriteType.BossA;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 209, spriteType, Color.GRAY));
+							this.shipCount++;
+							break;
+						case 3:
+							spriteType = SpriteType.BossB;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 142, spriteType, Color.WHITE));
+							this.shipCount++;
+							break;
+						case 4:
+							spriteType = SpriteType.BossB;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 142, spriteType, Color.GRAY));
+							this.shipCount++;
+							break;
+						case 5:
+							spriteType = SpriteType.BossC;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 188, spriteType, Color.WHITE));
+							this.shipCount++;
+							break;
+						case 6:
+							spriteType = SpriteType.BossC;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 188, spriteType, Color.GRAY));
+							this.shipCount++;
+							break;
+						default:
+							spriteType = SpriteType.BossD;
+							column.add(new EnemyShip((SEPARATION_DISTANCE
+									* this.enemyShips.indexOf(column))
+									+ positionX, (SEPARATION_DISTANCE * i)
+									+ positionY, 500, 274, spriteType, Color.GRAY));
+							this.shipCount++;
+							break;
+					}
+				}
 			}
 		}
 
@@ -337,8 +408,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
-			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+			if (shooter.isBoss()) {
+				bullets.add(BulletPool.getBullet(shooter.getPositionX()
+						+ shooter.width / 2, shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			} else {
+				bullets.add(BulletPool.getBullet(shooter.getPositionX()
+						+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+			}
 		}
 	}
 

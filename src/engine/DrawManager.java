@@ -75,7 +75,17 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
-		Explosion
+		Explosion,
+
+		BossA,
+
+		BossB,
+
+		BossC,
+
+		BossD,
+
+		BossExplosion
 	};
 
 	/**
@@ -101,6 +111,11 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			spriteMap.put(SpriteType.BossA, new boolean[500][209]);
+			spriteMap.put(SpriteType.BossB, new boolean[500][142]);
+			spriteMap.put(SpriteType.BossC, new boolean[500][188]);
+			spriteMap.put(SpriteType.BossD, new boolean[500][274]);
+			spriteMap.put(SpriteType.BossExplosion, new boolean[500][250]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -559,4 +574,5 @@ public final class DrawManager {
 			drawCenteredBigString(screen, "GO!", screen.getHeight() / 2
 					+ fontBigMetrics.getHeight() / 3);
 	}
+
 }

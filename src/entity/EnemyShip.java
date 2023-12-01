@@ -20,6 +20,8 @@ public class EnemyShip extends Entity {
 	private static final int B_TYPE_POINTS = 20;
 	/** Point value of a type C enemy. */
 	private static final int C_TYPE_POINTS = 30;
+	/** Point value of a type Boss A enemy. */
+	private static final int BOSS_A_TYPE_POINTS = 10000;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
 
@@ -29,6 +31,10 @@ public class EnemyShip extends Entity {
 	private boolean isDestroyed;
 	/** Values of the ship, in points, when destroyed. */
 	private int pointValue;
+
+	private boolean isBoss;
+
+	private int hpValue = 0;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -47,6 +53,7 @@ public class EnemyShip extends Entity {
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
+		this.isBoss = false;
 
 		switch (this.spriteType) {
 		case EnemyShipA1:
@@ -67,6 +74,24 @@ public class EnemyShip extends Entity {
 		}
 	}
 
+	public EnemyShip(final int positionX, final int positionY, final int width, final int height,
+					 final SpriteType spriteType, final Color color) {
+		super(positionX, positionY, width * 2, height * 2, color);
+
+		this.spriteType = spriteType;
+		this.animationCooldown = Core.getCooldown(500);
+		this.isDestroyed = false;
+		this.isBoss = true;
+
+		switch (this.spriteType) {
+			case BossA: case BossB: case BossC: case BossD:
+				this.pointValue = BOSS_A_TYPE_POINTS;
+				this.hpValue = 10;
+				break;
+		}
+	}
+
+
 	/**
 	 * Constructor, establishes the ship's properties for a special ship, with
 	 * known starting properties.
@@ -77,6 +102,7 @@ public class EnemyShip extends Entity {
 		this.spriteType = SpriteType.EnemyShipSpecial;
 		this.isDestroyed = false;
 		this.pointValue = BONUS_TYPE_POINTS;
+		this.isBoss = false;
 	}
 
 	/**
@@ -138,7 +164,8 @@ public class EnemyShip extends Entity {
 	 */
 	public final void destroy() {
 		this.isDestroyed = true;
-		this.spriteType = SpriteType.Explosion;
+		if (this.isBoss) this.spriteType = SpriteType.BossExplosion;
+		else this.spriteType = SpriteType.Explosion;
 	}
 
 	/**
@@ -149,4 +176,10 @@ public class EnemyShip extends Entity {
 	public final boolean isDestroyed() {
 		return this.isDestroyed;
 	}
+
+	public final boolean isBoss() { return this.isBoss; }
+
+	public final int isHpValue() { return this.hpValue; }
+
+	public final void getDamage(int damage) { this.hpValue -= damage; }
 }

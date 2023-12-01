@@ -71,6 +71,8 @@ public class GameScreen extends Screen {
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
 
+	private int bossStage;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
@@ -101,6 +103,7 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+		this.bossStage = gameSettings.getBossStage();
 	}
 
 	/**
@@ -239,12 +242,13 @@ public class GameScreen extends Screen {
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
 							- this.gameStartTime)) / 1000);
+
 			drawManager.drawCountDown(this, this.level, countdown,
-					this.bonusLife);
+						this.bonusLife);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
-					/ 12);
+						/ 12);
 			drawManager.drawHorizontalLine(this, this.height / 2 + this.height
-					/ 12);
+						/ 12);
 		}
 
 		drawManager.completeDrawing(this);
@@ -285,10 +289,22 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
-						this.enemyShipFormation.destroy(enemyShip);
-						recyclable.add(bullet);
+						if (!enemyShip.isBoss()) {
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
+							this.enemyShipFormation.destroy(enemyShip);
+							recyclable.add(bullet);
+						} else {
+							if (enemyShip.isHpValue() > 1) {
+								enemyShip.getDamage(1);
+								recyclable.add(bullet);
+							} else {
+								this.score += enemyShip.getPointValue();
+								this.shipsDestroyed++;
+								this.enemyShipFormation.destroy(enemyShip);
+								recyclable.add(bullet);
+							}
+						}
 					}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
@@ -303,6 +319,7 @@ public class GameScreen extends Screen {
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
+
 
 	/**
 	 * Checks if two entities are colliding.
