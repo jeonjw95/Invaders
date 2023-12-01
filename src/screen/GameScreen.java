@@ -73,6 +73,10 @@ public class GameScreen extends Screen {
 
 	private int bossStage;
 
+	private boolean isHpSelected = false;
+	private boolean isShipSpeedSelected = false;
+	private boolean isBulletSpeedSelected = false;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
@@ -80,7 +84,7 @@ public class GameScreen extends Screen {
 	 *            Current game state.
 	 * @param gameSettings
 	 *            Current game settings.
-	 * @param bonnusLife
+	 * @param bonusLife
 	 *            Checks if a bonus life is awarded this level.
 	 * @param width
 	 *            Screen width.
@@ -123,6 +127,16 @@ public class GameScreen extends Screen {
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+
+		if (isHpSelected) {
+			this.lives++; isHpSelected = false;
+		}
+		if (isShipSpeedSelected){
+			this.ship.increaseShipSpeed(); isShipSpeedSelected = false;
+		}
+		if (isBulletSpeedSelected){
+			this.ship.increaseBulletSpeed(); isBulletSpeedSelected = false;
+		}
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -354,5 +368,17 @@ public class GameScreen extends Screen {
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.lives,
 				this.bulletsShot, this.shipsDestroyed);
+	}
+
+	public final void setHpSelected(boolean isUsed){
+		isHpSelected = isUsed;
+	}
+
+	public final void setShipSpeedSelected(boolean isUsed){
+		isShipSpeedSelected = isUsed;
+	}
+
+	public final void  setBulletSpeedSelected(boolean isUsed){
+		isBulletSpeedSelected = isUsed;
 	}
 }

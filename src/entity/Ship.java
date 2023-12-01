@@ -18,14 +18,17 @@ public class Ship extends Entity {
 	/** Time between shots. */
 	private static final int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
-	private static final int BULLET_SPEED = -6;
+	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
-	private static final int SPEED = 2;
+	private static int SPEED = 2;
 	
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
+	private static final int shipSpeedIncrease = 2 ;
+	/** Bullet speed increase amount. */
+	private static final int bulletSpeedIncrease = -2;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -110,4 +113,20 @@ public class Ship extends Entity {
 	public final int getSpeed() {
 		return SPEED;
 	}
+
+	/**
+	 * Setter for the ship's speed.
+	 *
+	 * @return Speed of the ship.
+	 */
+	public final void increaseShipSpeed() {
+		SPEED += shipSpeedIncrease;}
+
+	/**
+	 * Setter for the ship's shooting frequency speed.
+	 *
+	 * @return Speed of the ship's shooting frequency.
+	 */
+	public final void increaseBulletSpeed() {
+		BULLET_SPEED += bulletSpeedIncrease;}
 }

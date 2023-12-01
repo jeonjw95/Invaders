@@ -258,6 +258,66 @@ public final class DrawManager {
 		backBufferGraphics.drawString(scoreString, screen.getWidth() - 60, 25);
 	}
 
+	public void drawBuff(final Screen screen, final int option,
+						 final int hpSelected,
+						 final int shipSpeedSelected,
+						 final int bulletSpeedSelected){
+		String buffString = "Choose one of the buffs";
+		String instructionsString =
+				"Select with w/s or up/down ";
+		String hpBuff = "HP";
+		String shipSpeed = "Ship Speed";
+		String bulletSpeed = "Bullet Speed";
+
+		backBufferGraphics.setColor(Color.RED);
+		drawCenteredRegularString(screen, instructionsString, screen.getHeight() / 2);
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, buffString, screen.getHeight() / 3);
+
+		if (option == 2)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (hpSelected >= 3) {
+			backBufferGraphics.setColor(Color.RED);
+			drawCenteredRegularString(screen, hpBuff + " buff has already been selected 3 times", screen.getHeight() / 3 * 2);
+		}
+		else
+			drawCenteredRegularString(screen, hpBuff + " " + hpSelected + " / 3" ,
+				screen.getHeight() / 3 * 2);
+
+		if (option == 3)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (shipSpeedSelected >= 3) {
+			backBufferGraphics.setColor(Color.RED);
+			drawCenteredRegularString(screen, shipSpeed + " buff has already been selected 3 times",
+					screen.getHeight()
+							/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+		}
+		else
+			drawCenteredRegularString(screen, shipSpeed + " " + shipSpeedSelected + " / 3" ,
+					screen.getHeight()
+							/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+		if (option == 4)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		if (bulletSpeedSelected >= 3) {
+			backBufferGraphics.setColor(Color.RED);
+			drawCenteredRegularString(screen, bulletSpeed + " buff has already been selected 3 times",
+					screen.getHeight() / 3
+							* 2 + fontRegularMetrics.getHeight() * 4);
+		}
+		else
+			drawCenteredRegularString(screen, bulletSpeed + " " + bulletSpeedSelected + " / 3" ,
+					screen.getHeight() / 3
+							* 2 + fontRegularMetrics.getHeight() * 4);
+
+
+	}
+
 	/**
 	 * Draws number of remaining lives on screen.
 	 * 
