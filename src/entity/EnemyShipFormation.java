@@ -63,6 +63,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
 	private @Setter Cooldown shootingCooldown;
+	private Cooldown bossShootingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -97,8 +98,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private @Getter List<EnemyShip> shooters;
 	/** Number of not destroyed ships. */
 	private int shipCount;
-
 	private int bossStage;
+	private boolean isShootingIntervalChanged;
 
 	private @Setter boolean isTesting;
 
@@ -137,6 +138,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.shooters = new ArrayList<EnemyShip>();
 		this.isTesting = false;
 		SpriteType spriteType;
+		this.isShootingIntervalChanged = true;
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
 				+ " ship formation in (" + positionX + "," + positionY + ")");
@@ -266,10 +268,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Updates the position of the ships.
 	 */
 	public final void update() {
-		if(this.shootingCooldown == null) {
+		if (this.shootingCooldown == null) {
 			this.shootingCooldown = Core.getVariableCooldown(shootingInterval,
 					shootingVariance);
 			this.shootingCooldown.reset();
+		}
+		if (this.isShootingIntervalChanged) {
+			this.bossShootingCooldown = Core.getVariableCooldown(shootingInterval,
+					shootingVariance);
+			this.bossShootingCooldown.reset();
 		}
 		
 		cleanUp();
@@ -408,22 +415,45 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final boolean shoot(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
+		setShootingInterval(2000);
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
-
 		if (this.shootingCooldown.checkFinished() || isTesting) {
 			this.shootingCooldown.reset();
-			if (shooter.isBoss()) {
-				bullets.add(BulletPool.getBullet(shooter.getPositionX()
-						+ shooter.width / 2, shooter.getPositionY() + shooter.height, BULLET_SPEED));
-			} else {
-				bullets.add(BulletPool.getBullet(shooter.getPositionX()
-						+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
-			}
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
 			return true;
 		}
 		return false;
 	}
+
+	public final void bossAttackMechanism1(final Set<Bullet> bullets) {
+		// For now, only ships in the bottom row are able to shoot.
+		EnemyShip shooter = this.shooters.get(0);
+		int[] bulletLocation = new int[7];
+		for (int i = 0; i < 7; i++) {
+			bulletLocation[i] = (int) (Math.random() * shooter.width);
+		}
+		setShootingInterval(1000);
+		if (this.bossShootingCooldown.checkFinished()) {
+			this.bossShootingCooldown.reset();
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[0], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[1], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[2], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[3], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[4], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[5], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ bulletLocation[6], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+		}
+	}
+
 
 	/**
 	 * Destroys a ship.
@@ -508,5 +538,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
+	}
+
+	public void setShootingInterval(int shootingInterval) {
+		if (this.shootingInterval != shootingInterval) {
+			this.shootingInterval = shootingInterval;
+			this.isShootingIntervalChanged = true;
+		} else
+			this.isShootingIntervalChanged = false;
 	}
 }

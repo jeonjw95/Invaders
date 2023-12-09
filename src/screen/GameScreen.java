@@ -72,6 +72,8 @@ public class GameScreen extends Screen {
 	private @Getter boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	private int bossStage;
+
 	private @Setter boolean isTesting;
 
 	/** Checks if a hp buff is selected. */
@@ -111,6 +113,7 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+		this.bossStage = gameSettings.getBossStage();
 		this.isTesting = false;
 	}
 
@@ -213,7 +216,32 @@ public class GameScreen extends Screen {
 
 			this.ship.update();
 			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+
+			if(this.bossStage == 0)
+				this.enemyShipFormation.shoot(this.bullets);
+			else if (this.bossStage == 1){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 2){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 3){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 4){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 5){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 6){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+			else if (this.bossStage == 7){
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			}
+
+
 		}
 
 		manageCollisions();
