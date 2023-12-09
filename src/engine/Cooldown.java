@@ -68,4 +68,16 @@ public class Cooldown {
 					+ (int) (Math.random()
 							* (this.milliseconds + this.variance));
 	}
+
+	/**
+	 * Checks if the cooldown is more than parameter value.
+	 * @param checkTime - 이 시간 보다 높으면 true, 낮으면 false
+	 * @return Cooldown state.
+	 */
+	public final boolean checkMoreThan(int checkTime) {
+		if (this.time + checkTime / 2 < System.currentTimeMillis())
+			return true;
+		return false;
+	}
+
 }

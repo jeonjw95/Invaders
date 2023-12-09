@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.time.LocalDateTime;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +53,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int DESCENT_DISTANCE = 20;
 	/** Minimum speed allowed. */
 	private static final int MINIMUM_SPEED = 10;
-
+	/** Enemyship 기본 공격 주기 */
+	private static final int ENEMYSHIP_SHOOTING_INTERVAL = 2000;
+	/** Boss 기본 공격 주기 */
+	private static final int BOSS_SHOOTING_INTERVAL = 1000;
+	/** Boss Lazer 주기 */
+	private static final int BOSS_SHOOTING_LAZER_INTERVAL = 10000;
+	/** BOSS_SHOOTING_LAZER_INTERVAL와 곱한 만큼 Lazer 발사  */
+	private static final double BOSS_SHOOTING_LAZER_RATE = 0.3;
+	/** 무한대 상수 (공격 주기를 무한대로 만들어 공격을 못하는 상태로 만듦)*/
+	private static final int INFINITE = 99999;
 	/** DrawManager instance. */
 	private DrawManager drawManager;
 	/** Application logger. */
@@ -64,6 +75,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Minimum time between shots. */
 	private @Setter Cooldown shootingCooldown;
 	private Cooldown bossShootingCooldown;
+
+	private Cooldown shootingLazerCooldown;
+
+	private Cooldown lazerCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -72,6 +87,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private int shootingInterval;
 	/** Variance in the time between shots. */
 	private int shootingVariance;
+	private int lazerInterval;
 	/** Initial ship speed. */
 	private int baseSpeed;
 	/** Speed of the ships. */
@@ -100,6 +116,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private int shipCount;
 	private int bossStage;
 	private boolean isShootingIntervalChanged;
+	private boolean isLazerOn;
+	private int randomLazerLocation;
 
 	private @Setter boolean isTesting;
 
@@ -130,6 +148,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.shootingInterval = gameSettings.getShootingFrecuency();
 		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
 				* SHOOTING_VARIANCE);
+		this.lazerInterval = 1;
 		this.baseSpeed = gameSettings.getBaseSpeed();
 		this.movementSpeed = this.baseSpeed;
 		this.bossStage = gameSettings.getBossStage();
@@ -139,6 +158,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.isTesting = false;
 		SpriteType spriteType;
 		this.isShootingIntervalChanged = true;
+		this.isLazerOn = true;
+		this.randomLazerLocation = (int) (Math.random() * 900);
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
 				+ " ship formation in (" + positionX + "," + positionY + ")");
@@ -278,6 +299,14 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					shootingVariance);
 			this.bossShootingCooldown.reset();
 		}
+		if(this.isLazerOn) {
+			this.lazerCooldown = Core.getCooldown(lazerInterval);
+			this.lazerCooldown.reset();
+		}
+		if(this.shootingLazerCooldown == null) {
+			this.shootingLazerCooldown = Core.getCooldown(BOSS_SHOOTING_LAZER_INTERVAL);
+			this.shootingLazerCooldown.reset();
+		}
 		
 		cleanUp();
 
@@ -415,7 +444,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	public final boolean shoot(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
-		setShootingInterval(2000);
+		setShootingInterval(ENEMYSHIP_SHOOTING_INTERVAL);
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 		if (this.shootingCooldown.checkFinished() || isTesting) {
@@ -434,7 +463,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < 7; i++) {
 			bulletLocation[i] = (int) (Math.random() * shooter.width);
 		}
-		setShootingInterval(1000);
+		setShootingInterval(BOSS_SHOOTING_INTERVAL);
 		if (this.bossShootingCooldown.checkFinished()) {
 			this.bossShootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
@@ -453,6 +482,28 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					+ bulletLocation[6], shooter.getPositionY() + shooter.height, BULLET_SPEED));
 		}
 	}
+
+	public final void bossAttackMechanism2(final Set<Bullet> bullets) {
+		// For now, only ships in the bottom row are able to shoot.
+		EnemyShip shooter = this.shooters.get(0);
+		if(this.shootingLazerCooldown.checkMoreThan((int)(BOSS_SHOOTING_LAZER_INTERVAL * BOSS_SHOOTING_LAZER_RATE))) {
+			if(this.shootingLazerCooldown.checkFinished()) {
+				randomLazerLocation = (int) (Math.random() * shooter.width);
+				this.shootingLazerCooldown.reset();
+			}
+			setLazerInterval(INFINITE);
+		}
+		else {
+			setLazerInterval(1);
+			if(this.lazerCooldown.checkFinished()) {
+				this.lazerCooldown.reset();
+				bullets.add(BulletPool.getBullet(shooter.getPositionX()
+								+ randomLazerLocation, shooter.getPositionY() + shooter.height,
+						BULLET_SPEED * 2));
+			}
+		}
+	}
+
 
 
 	/**
@@ -546,5 +597,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			this.isShootingIntervalChanged = true;
 		} else
 			this.isShootingIntervalChanged = false;
+	}
+
+	public void setLazerInterval(int lazerInterval) {
+		if(this.lazerInterval != lazerInterval) {
+			this.lazerInterval = lazerInterval;
+			this.isLazerOn = true;
+		}
+		else this.isLazerOn = false;
 	}
 }
