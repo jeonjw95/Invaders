@@ -1,6 +1,6 @@
 package entity;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,20 +8,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import lombok.Getter;
-import lombok.Setter;
 import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
+import engine.SoundManager;
 
 /**
  * Groups enemy ships into a formation that moves together.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class EnemyShipFormation implements Iterable<EnemyShip> {
 
@@ -62,7 +61,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
-	private @Setter Cooldown shootingCooldown;
+	private Cooldown shootingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -86,21 +85,19 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Total height of the formation. */
 	private int height;
 	/** Position in the x-axis of the upper left corner of the formation. */
-	private @Getter int positionX;
+	private int positionX;
 	/** Position in the y-axis of the upper left corner of the formation. */
-	private @Getter int positionY;
+	private int positionY;
 	/** Width of one ship. */
 	private int shipWidth;
 	/** Height of one ship. */
 	private int shipHeight;
 	/** List of ships that are able to shoot. */
-	private @Getter List<EnemyShip> shooters;
+	private List<EnemyShip> shooters;
 	/** Number of not destroyed ships. */
 	private int shipCount;
 
 	private int bossStage;
-
-	private @Setter boolean isTesting;
 
 	/** Directions the formation can move. */
 	private enum Direction {
@@ -114,7 +111,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Constructor, sets the initial conditions.
-	 * 
+	 *
 	 * @param gameSettings
 	 *            Current game settings.
 	 */
@@ -130,12 +127,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
-		this.movementSpeed = this.baseSpeed;
 		this.bossStage = gameSettings.getBossStage();
+		this.movementSpeed = this.baseSpeed;
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
-		this.isTesting = false;
 		SpriteType spriteType;
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
@@ -170,6 +166,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					switch (this.bossStage)
 					{
 						case 1:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossA;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -178,6 +175,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 2:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossA;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -186,6 +184,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 3:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossB;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -194,6 +193,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 4:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossB;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -202,6 +202,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 5:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossC;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -210,6 +211,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 6:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossC;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -244,7 +246,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Associates the formation to a given screen.
-	 * 
+	 *
 	 * @param newScreen
 	 *            Screen to attach.
 	 */
@@ -271,7 +273,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					shootingVariance);
 			this.shootingCooldown.reset();
 		}
-		
+
 		cleanUp();
 
 		int movementX = 0;
@@ -281,9 +283,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementSpeed = (int) (Math.pow(remainingProportion, 2)
 				* this.baseSpeed);
 		this.movementSpeed += MINIMUM_SPEED;
-		
+
 		movementInterval++;
-		if (movementInterval >= this.movementSpeed || isTesting) {
+		if (movementInterval >= this.movementSpeed) {
 			movementInterval = 0;
 
 			boolean isAtBottom = positionY
@@ -384,7 +386,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		int leftMostPoint = 0;
 		int rightMostPoint = 0;
-		
+
 		for (List<EnemyShip> column : this.enemyShips) {
 			if (!column.isEmpty()) {
 				if (leftMostPoint == 0)
@@ -402,16 +404,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Shoots a bullet downwards.
-	 * 
+	 *
 	 * @param bullets
 	 *            Bullets set to add the bullet being shot.
 	 */
-	public final boolean shoot(final Set<Bullet> bullets) {
+	public final void shoot(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 
-		if (this.shootingCooldown.checkFinished() || isTesting) {
+		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			if (shooter.isBoss()) {
 				bullets.add(BulletPool.getBullet(shooter.getPositionX()
@@ -420,14 +422,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				bullets.add(BulletPool.getBullet(shooter.getPositionX()
 						+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
 			}
-			return true;
 		}
-		return false;
 	}
 
 	/**
 	 * Destroys a ship.
-	 * 
+	 *
 	 * @param destroyedShip
 	 *            Ship to be destroyed.
 	 */
@@ -439,6 +439,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					this.logger.info("Destroyed ship in ("
 							+ this.enemyShips.indexOf(column) + "," + i + ")");
 				}
+		SoundManager.stopSound("boss",2f);
 
 		// Updates the list of ships that can shoot the player.
 		if (this.shooters.contains(destroyedShip)) {
@@ -468,7 +469,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Gets the ship on a given column that will be in charge of shooting.
-	 * 
+	 *
 	 * @param column
 	 *            Column to search.
 	 * @return New shooter ship.
@@ -487,7 +488,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Returns an iterator over the ships in the formation.
-	 * 
+	 *
 	 * @return Iterator over the enemy ships.
 	 */
 	@Override
@@ -503,7 +504,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	/**
 	 * Checks if there are any ships remaining.
-	 * 
+	 *
 	 * @return True when all ships have been destroyed.
 	 */
 	public final boolean isEmpty() {
