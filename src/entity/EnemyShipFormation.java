@@ -95,8 +95,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private int shootingInterval;
 	/** Variance in the time between shots. */
 	private int shootingVariance;
-	private int lazerInterval;
-	private int turningBulletsInterval;
+	private @Getter int lazerInterval;
+	private @Getter int turningBulletsInterval;
 	/** Initial ship speed. */
 	private int baseSpeed;
 	/** Speed of the ships. */
@@ -486,7 +486,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			bulletLocation[i] = (int) (Math.random() * shooter.width);
 		}
 		setShootingInterval(BOSS_SHOOTING_INTERVAL);
-		if (this.bossShootingCooldown.checkFinished()) {
+		if (this.bossShootingCooldown.checkFinished() || isTesting) {
 			this.bossShootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
 					+ bulletLocation[0], shooter.getPositionY() + shooter.height, BULLET_SPEED));
@@ -508,7 +508,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final void bossAttackMechanism2(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
 		EnemyShip shooter = this.shooters.get(0);
-		if(this.shootingLazerCooldown.checkMoreThan((int)(BOSS_SHOOTING_LAZER_INTERVAL * BOSS_SHOOTING_LAZER_RATE))) {
+		if(this.shootingLazerCooldown.checkMoreThan((int)(BOSS_SHOOTING_LAZER_INTERVAL * BOSS_SHOOTING_LAZER_RATE)) || isTesting) {
 			if(this.shootingLazerCooldown.checkFinished()) {
 				randomLazerLocation = (int) (Math.random() * shooter.width);
 				this.shootingLazerCooldown.reset();
@@ -529,7 +529,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final void bossAttackMechanism3(final Set<Bullet> bullets) {
 		// For now, only ships in the bottom row are able to shoot.
 		EnemyShip shooter = this.shooters.get(0);
-		if(this.shootingTurningBulletsCooldown.checkMoreThan((int)(BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE))) {
+		if(this.shootingTurningBulletsCooldown.checkMoreThan((int)(BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE)) || isTesting) {
 			if(this.shootingTurningBulletsCooldown.checkFinished()) {
 				randomTurningBulletLocation = (int) (Math.random() * shooter.width);
 				this.shootingTurningBulletsCooldown.reset();
