@@ -17,7 +17,7 @@ public class Ship extends Entity {
   /**
    * Time between shots.
    */
-  private static final int SHOOTING_INTERVAL = 750;
+  private static final int SHOOTING_INTERVAL = 1;
   /**
    * Speed of the bullets shot by the ship.
    */
@@ -25,7 +25,7 @@ public class Ship extends Entity {
   /**
    * Movement of the ship for each unit of time.
    */
-  private static int SPEED = 2;
+  private static int SPEED = 10;
 
   /**
    * Minimum time between shots.
@@ -92,11 +92,11 @@ public class Ship extends Entity {
    * Updates status of the ship.
    */
   public final void update() {
-		if (!this.destructionCooldown.checkFinished()) {
-			this.spriteType = SpriteType.ShipDestroyed;
-		} else {
-			this.spriteType = SpriteType.Ship;
-		}
+    if (!this.destructionCooldown.checkFinished()) {
+      this.spriteType = SpriteType.ShipDestroyed;
+    } else {
+      this.spriteType = SpriteType.Ship;
+    }
   }
 
   /**
