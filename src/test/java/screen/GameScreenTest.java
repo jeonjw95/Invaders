@@ -220,7 +220,7 @@ class GameScreenTest {
       Bullet bullet = bullets.iterator().next();
       assertEquals(bullet.getPositionY(), ship.getPositionY());
       gameScreen.update();
-      assertEquals(bullet.getPositionY(), ship.getPositionY() + bullet.getSpeed());
+      assertEquals(bullet.getPositionY(), ship.getPositionY() + bullet.getSpeedY());
       test3 = true;
     }
 
@@ -239,7 +239,7 @@ class GameScreenTest {
 
       // 쏜 총알의 위치가 잘 update되는지 확인
       gameScreen.update();
-      assertEquals(bullet.getPositionY(), shooterPositionY + bullet.getSpeed());
+      assertEquals(bullet.getPositionY(), shooterPositionY + bullet.getSpeedY());
       assertEquals(2, bullets.size());
       test4 = true;
     }

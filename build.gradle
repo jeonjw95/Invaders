@@ -37,8 +37,7 @@ jar {
     }
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.test.output
-    exclude 'META-INF/*.md', 'module-info.class', 'screen/GameScreenTest$TestUpdate.class', 'screen/GameScreenTest$TestUpdate$TestSimulation.class',
-            'screen/GameScreenTest$TestUpdate$TestSimulation.class', 'screen/GameScreenTest.class', 'engine/SoundManagerTest.class'
+    exclude 'META-INF/*.md', 'module-info.class', 'screen/GameScreenTest$TestUpdate.class', 'screen/GameScreenTest$TestUpdate$TestSimulation.class', 'screen/GameScreenTest$TestUpdate$TestSimulation.class', 'screen/GameScreenTest.class', 'engine/SoundManagerTest.class', 'entity/BossAttackMechanismTest.class'
 }
 
 test {

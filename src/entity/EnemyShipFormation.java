@@ -7,12 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.time.LocalDateTime;
+
 
 import engine.*;
 import lombok.Getter;
 import lombok.Setter;
 import screen.Screen;
+import engine.Cooldown;
+import engine.Core;
+import engine.DrawManager;
 import engine.DrawManager.SpriteType;
+import engine.GameSettings;
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -73,7 +79,34 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * Minimum speed allowed.
    */
   private static final int MINIMUM_SPEED = 10;
-
+  /**
+   * Enemyship 기본 공격 주기
+   */
+  private static final int ENEMYSHIP_SHOOTING_INTERVAL = 2000;
+  /**
+   * Boss 기본 공격 주기
+   */
+  private static final int BOSS_SHOOTING_INTERVAL = 1000;
+  /**
+   * Boss Lazer 주기
+   */
+  private static final int BOSS_SHOOTING_LAZER_INTERVAL = 10000;
+  /**
+   * BOSS_SHOOTING_LAZER_INTERVAL와 곱한 만큼 Lazer 발사
+   */
+  private static final double BOSS_SHOOTING_LAZER_RATE = 0.3;
+  /**
+   * Boss TURNING BULLET 주기
+   */
+  private static final int BOSS_SHOOTING_TURNING_BULLET_INTERVAL = 2000;
+  /**
+   * BOSS_SHOOTING_TURNING BULLET_INTERVAL와 곱한 만큼 Skill 발사
+   */
+  private static final double BOSS_SHOOTING_TURNING_BULLET_RATE = 0.8;
+  /**
+   * 무한대 상수 (공격 주기를 무한대로 만들어 공격을 못하는 상태로 만듦)
+   */
+  private static final int INFINITE = 99999;
   /**
    * DrawManager instance.
    */
@@ -95,6 +128,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * Minimum time between shots.
    */
   private @Setter Cooldown shootingCooldown;
+  private Cooldown bossShootingCooldown;
+
+  private Cooldown shootingLazerCooldown;
+
+  private Cooldown lazerCooldown;
+
+  private Cooldown shootingTurningBulletsCooldown;
+
+  private Cooldown turningBulletsCooldown;
+
+  private Cooldown finalBossShootingCooldown;
   /**
    * Number of ships in the formation - horizontally.
    */
@@ -111,6 +155,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * Variance in the time between shots.
    */
   private int shootingVariance;
+  private @Getter int lazerInterval;
+  private @Getter int turningBulletsInterval;
   /**
    * Initial ship speed.
    */
@@ -163,8 +209,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * Number of not destroyed ships.
    */
   private int shipCount;
-
   private int bossStage;
+  private boolean isShootingIntervalChanged;
+  private boolean isLazerOn;
+  private boolean isTurningBulletsOn;
+  private int randomLazerLocation;
+  private int randomTurningBulletLocation;
 
   private @Setter boolean isTesting;
 
@@ -204,6 +254,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
     this.shootingInterval = gameSettings.getShootingFrecuency();
     this.shootingVariance = (int) (gameSettings.getShootingFrecuency()
         * SHOOTING_VARIANCE);
+    this.lazerInterval = 1;
+    this.turningBulletsInterval = 100;
     this.baseSpeed = gameSettings.getBaseSpeed();
     this.movementSpeed = this.baseSpeed;
     this.bossStage = gameSettings.getBossStage();
@@ -212,6 +264,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
     this.shooters = new ArrayList<EnemyShip>();
     this.isTesting = false;
     SpriteType spriteType;
+    this.isShootingIntervalChanged = true;
+    this.isLazerOn = true;
+    this.isTurningBulletsOn = true;
+    this.randomLazerLocation = (int) (Math.random() * 900);
+    this.randomTurningBulletLocation = (int) (Math.random() * 900);
 
     this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
         + " ship formation in (" + positionX + "," + positionY + ")");
@@ -303,7 +360,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
                   + positionX, (SEPARATION_DISTANCE * i)
-                  + positionY, 500, 274, spriteType, Color.GRAY));
+                  + positionY, 400, 219, spriteType, Color.GRAY));
               this.shipCount++;
               break;
           }
@@ -353,6 +410,30 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
       this.shootingCooldown = Core.getVariableCooldown(shootingInterval,
           shootingVariance);
       this.shootingCooldown.reset();
+    }
+    if (this.isShootingIntervalChanged) {
+      this.bossShootingCooldown = Core.getVariableCooldown(shootingInterval,
+          shootingVariance);
+      this.bossShootingCooldown.reset();
+      this.finalBossShootingCooldown = Core.getVariableCooldown(shootingInterval,
+          shootingVariance);
+      this.finalBossShootingCooldown.reset();
+    }
+    if (this.isLazerOn) {
+      this.lazerCooldown = Core.getCooldown(lazerInterval);
+      this.lazerCooldown.reset();
+    }
+    if (this.shootingLazerCooldown == null) {
+      this.shootingLazerCooldown = Core.getCooldown(BOSS_SHOOTING_LAZER_INTERVAL);
+      this.shootingLazerCooldown.reset();
+    }
+    if (this.isTurningBulletsOn) {
+      this.turningBulletsCooldown = Core.getCooldown(turningBulletsInterval);
+      this.turningBulletsCooldown.reset();
+    }
+    if (this.shootingTurningBulletsCooldown == null) {
+      this.shootingTurningBulletsCooldown = Core.getCooldown(BOSS_SHOOTING_TURNING_BULLET_INTERVAL);
+      this.shootingTurningBulletsCooldown.reset();
     }
 
     cleanUp();
@@ -496,21 +577,126 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    */
   public final boolean shoot(final Set<Bullet> bullets) {
     // For now, only ships in the bottom row are able to shoot.
+    setShootingInterval(ENEMYSHIP_SHOOTING_INTERVAL);
     int index = (int) (Math.random() * this.shooters.size());
     EnemyShip shooter = this.shooters.get(index);
-
     if (this.shootingCooldown.checkFinished() || isTesting) {
       this.shootingCooldown.reset();
-      if (shooter.isBoss()) {
-        bullets.add(BulletPool.getBullet(shooter.getPositionX()
-            + shooter.width / 2, shooter.getPositionY() + shooter.height, BULLET_SPEED));
-      } else {
-        bullets.add(BulletPool.getBullet(shooter.getPositionX()
-            + shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
-      }
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
       return true;
     }
     return false;
+  }
+
+  public final void bossAttackMechanism1(final Set<Bullet> bullets) {
+    // For now, only ships in the bottom row are able to shoot.
+    EnemyShip shooter = this.shooters.get(0);
+    int[] bulletLocation = new int[7];
+    for (int i = 0; i < 7; i++) {
+      bulletLocation[i] = (int) (Math.random() * shooter.width);
+    }
+    setShootingInterval(BOSS_SHOOTING_INTERVAL - (this.bossStage * 50));
+    if (this.bossShootingCooldown.checkFinished() || isTesting) {
+      this.bossShootingCooldown.reset();
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[0], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[1], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[2], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[3], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[4], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[5], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+      bullets.add(BulletPool.getBullet(shooter.getPositionX()
+          + bulletLocation[6], shooter.getPositionY() + shooter.height, BULLET_SPEED));
+    }
+  }
+
+  public final void bossAttackMechanism2(final Set<Bullet> bullets) {
+    // For now, only ships in the bottom row are able to shoot.
+    EnemyShip shooter = this.shooters.get(0);
+    if (this.shootingLazerCooldown.checkMoreThan(
+        (int) (BOSS_SHOOTING_LAZER_INTERVAL * BOSS_SHOOTING_LAZER_RATE)) || isTesting) {
+      if (this.shootingLazerCooldown.checkFinished()) {
+        randomLazerLocation = (int) (Math.random() * shooter.width);
+        this.shootingLazerCooldown.reset();
+      }
+      setLazerInterval(INFINITE);
+    } else {
+      setLazerInterval(1);
+      if (this.lazerCooldown.checkFinished()) {
+        this.lazerCooldown.reset();
+        bullets.add(BulletPool.getBullet(shooter.getPositionX()
+                + randomLazerLocation, shooter.getPositionY() + shooter.height,
+            BULLET_SPEED * 2));
+      }
+    }
+  }
+
+  public final void bossAttackMechanism3(final Set<Bullet> bullets, final Ship ship) {
+    // For now, only ships in the bottom row are able to shoot.
+    EnemyShip shooter = this.shooters.get(0);
+    if (this.shootingTurningBulletsCooldown.checkMoreThan(
+        (int) (BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE))
+        || isTesting) {
+      if (this.shootingTurningBulletsCooldown.checkFinished()) {
+        randomTurningBulletLocation = (int) (Math.random() * shooter.width);
+        this.shootingTurningBulletsCooldown.reset();
+      }
+      setTurningBulletsInterval(INFINITE);
+    } else {
+      setTurningBulletsInterval(100);
+      if (this.turningBulletsCooldown.checkFinished()) {
+        this.turningBulletsCooldown.reset();
+        Bullet bullet = BulletPool.getBullet(shooter.getPositionX()
+                + randomTurningBulletLocation, shooter.getPositionY() + shooter.height,
+            BULLET_SPEED);
+        if (bullet.getPositionX() > ship.getPositionX()) {
+          bullet.setIsTurningRight();
+        } else {
+          bullet.setIsTurningLeft();
+        }
+        bullets.add(bullet);
+      }
+    }
+  }
+
+  public final void bossAttackMechanism4(final Set<Bullet> bullets, final Ship ship) {
+    // For now, only ships in the bottom row are able to shoot.
+    EnemyShip shooter = this.shooters.get(0);
+    if (this.shootingTurningBulletsCooldown.checkMoreThan(
+        (int) (BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE))
+        || isTesting) {
+      if (this.shootingTurningBulletsCooldown.checkFinished()) {
+        randomTurningBulletLocation = (int) (Math.random() * shooter.width);
+        this.shootingTurningBulletsCooldown.reset();
+      }
+      setTurningBulletsInterval(INFINITE);
+    } else {
+      setTurningBulletsInterval(300);
+      if (this.turningBulletsCooldown.checkFinished()) {
+        this.turningBulletsCooldown.reset();
+        bullets.add(BulletPool.getBullet(shooter.getPositionX()
+            + shooter.width, shooter.getPositionY() + shooter.height / 4, BULLET_SPEED));
+        bullets.add(BulletPool.getBullet(shooter.getPositionX()
+            + shooter.width, shooter.getPositionY() + shooter.height * 3 / 4, BULLET_SPEED));
+        bullets.add(BulletPool.getBullet(shooter.getPositionX()
+            , shooter.getPositionY() + shooter.height / 4, BULLET_SPEED));
+        bullets.add(BulletPool.getBullet(shooter.getPositionX()
+            , shooter.getPositionY() + shooter.height * 3 / 4, BULLET_SPEED));
+        for (Bullet bullet : bullets) {
+          if (bullet.getPositionX() > ship.getPositionX()) {
+            bullet.setIsTurningRight();
+          } else {
+            bullet.setIsTurningLeft();
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -601,5 +787,32 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    */
   public final boolean isEmpty() {
     return this.shipCount <= 0;
+  }
+
+  public void setShootingInterval(int shootingInterval) {
+    if (this.shootingInterval != shootingInterval) {
+      this.shootingInterval = shootingInterval;
+      this.isShootingIntervalChanged = true;
+    } else {
+      this.isShootingIntervalChanged = false;
+    }
+  }
+
+  public void setLazerInterval(int lazerInterval) {
+    if (this.lazerInterval != lazerInterval) {
+      this.lazerInterval = lazerInterval;
+      this.isLazerOn = true;
+    } else {
+      this.isLazerOn = false;
+    }
+  }
+
+  public void setTurningBulletsInterval(int turningBulletsInterval) {
+    if (this.turningBulletsInterval != turningBulletsInterval) {
+      this.turningBulletsInterval = turningBulletsInterval;
+      this.isTurningBulletsOn = true;
+    } else {
+      this.isTurningBulletsOn = false;
+    }
   }
 }

@@ -165,7 +165,7 @@ public final class DrawManager {
       spriteMap.put(SpriteType.BossA, new boolean[500][209]);
       spriteMap.put(SpriteType.BossB, new boolean[500][142]);
       spriteMap.put(SpriteType.BossC, new boolean[500][188]);
-      spriteMap.put(SpriteType.BossD, new boolean[500][274]);
+      spriteMap.put(SpriteType.BossD, new boolean[400][219]);
       spriteMap.put(SpriteType.BossExplosion, new boolean[500][250]);
 
       fileManager.loadSprite(spriteMap);
@@ -220,7 +220,8 @@ public final class DrawManager {
     backBufferGraphics = backBuffer.getGraphics();
 
     backBufferGraphics.setColor(Color.BLACK);
-    backBufferGraphics.fillRect(0, 0, screen.getWidth(), screen.getHeight());
+    backBufferGraphics
+        .fillRect(0, 0, screen.getWidth(), screen.getHeight());
 
     fontRegularMetrics = backBufferGraphics.getFontMetrics(fontRegular);
     fontBigMetrics = backBufferGraphics.getFontMetrics(fontBig);
@@ -236,7 +237,8 @@ public final class DrawManager {
    */
   public void completeDrawing(final Screen screen) {
     if (frame != null) {
-      graphics.drawImage(backBuffer, frame.getInsets().left, frame.getInsets().top, frame);
+      graphics.drawImage(backBuffer, frame.getInsets().left,
+          frame.getInsets().top, frame);
     }
   }
 
@@ -247,14 +249,16 @@ public final class DrawManager {
    * @param positionX Coordinates for the left side of the image.
    * @param positionY Coordinates for the upper side of the image.
    */
-  public void drawEntity(final Entity entity, final int positionX, final int positionY) {
+  public void drawEntity(final Entity entity, final int positionX,
+      final int positionY) {
     boolean[][] image = spriteMap.get(entity.getSpriteType());
 
     backBufferGraphics.setColor(entity.getColor());
     for (int i = 0; i < image.length; i++) {
       for (int j = 0; j < image[i].length; j++) {
         if (image[i][j]) {
-          backBufferGraphics.drawRect(positionX + i * 2, positionY + j * 2, 1, 1);
+          backBufferGraphics.drawRect(positionX + i * 2, positionY
+              + j * 2, 1, 1);
         }
       }
     }
@@ -270,10 +274,10 @@ public final class DrawManager {
     backBufferGraphics.setColor(Color.GREEN);
     backBufferGraphics.drawLine(0, 0, screen.getWidth() - 1, 0);
     backBufferGraphics.drawLine(0, 0, 0, screen.getHeight() - 1);
-    backBufferGraphics.drawLine(screen.getWidth() - 1, 0, screen.getWidth() - 1,
-        screen.getHeight() - 1);
-    backBufferGraphics.drawLine(0, screen.getHeight() - 1, screen.getWidth() - 1,
-        screen.getHeight() - 1);
+    backBufferGraphics.drawLine(screen.getWidth() - 1, 0,
+        screen.getWidth() - 1, screen.getHeight() - 1);
+    backBufferGraphics.drawLine(0, screen.getHeight() - 1,
+        screen.getWidth() - 1, screen.getHeight() - 1);
   }
 
   /**

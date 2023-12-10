@@ -85,26 +85,26 @@ public class BuffScreen extends Screen {
    * Shifts the focus to the next menu item.
    */
   private void nextMenuItem() {
-      if (this.itemCode == 3) {
-          this.itemCode = 4;
-      } else if (this.itemCode == 4) {
-          this.itemCode = 2;
-      } else {
-          this.itemCode++;
-      }
+    if (this.itemCode == 3) {
+      this.itemCode = 4;
+    } else if (this.itemCode == 4) {
+      this.itemCode = 2;
+    } else {
+      this.itemCode++;
+    }
   }
 
   /**
    * Shifts the focus to the previous menu item.
    */
   private void previousMenuItem() {
-      if (this.itemCode == 4) {
-          this.itemCode = 3;
-      } else if (this.itemCode == 2) {
-          this.itemCode = 4;
-      } else {
-          this.itemCode--;
-      }
+    if (this.itemCode == 4) {
+      this.itemCode = 3;
+    } else if (this.itemCode == 2) {
+      this.itemCode = 4;
+    } else {
+      this.itemCode--;
+    }
   }
 
   private void draw() {
