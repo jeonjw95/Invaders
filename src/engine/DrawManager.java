@@ -114,7 +114,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.BossA, new boolean[500][209]);
 			spriteMap.put(SpriteType.BossB, new boolean[500][142]);
 			spriteMap.put(SpriteType.BossC, new boolean[500][188]);
-			spriteMap.put(SpriteType.BossD, new boolean[500][274]);
+			spriteMap.put(SpriteType.BossD, new boolean[400][219]);
 			spriteMap.put(SpriteType.BossExplosion, new boolean[500][250]);
 
 			fileManager.loadSprite(spriteMap);

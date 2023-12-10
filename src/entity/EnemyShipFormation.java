@@ -259,7 +259,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
 									+ positionX, (SEPARATION_DISTANCE * i)
-									+ positionY, 500, 274, spriteType, Color.GRAY));
+									+ positionY, 400, 219, spriteType, Color.GRAY));
 							this.shipCount++;
 							break;
 					}
