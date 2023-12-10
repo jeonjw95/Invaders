@@ -320,7 +320,7 @@ public class GameScreen extends Screen {
           - (System.currentTimeMillis()
           - this.gameStartTime)) / 1000);
       if (bossStage == 0) {
-        drawManager.drawCountDown(this, (this.level + 1) / 2, countdown,
+        drawManager.drawCountDown(this, this.level, countdown,
             this.bonusLife);
       } else {
         drawManager.drawBossCountDown(this, countdown);
