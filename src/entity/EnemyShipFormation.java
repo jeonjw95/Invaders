@@ -8,14 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import engine.*;
 import lombok.Getter;
 import lombok.Setter;
 import screen.Screen;
-import engine.Cooldown;
-import engine.Core;
-import engine.DrawManager;
 import engine.DrawManager.SpriteType;
-import engine.GameSettings;
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -170,6 +167,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					switch (this.bossStage)
 					{
 						case 1:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossA;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -178,6 +176,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 2:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossA;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -186,6 +185,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 3:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossB;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -194,6 +194,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 4:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossB;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -202,6 +203,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 5:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossC;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -210,6 +212,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.shipCount++;
 							break;
 						case 6:
+							SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
 							spriteType = SpriteType.BossC;
 							column.add(new EnemyShip((SEPARATION_DISTANCE
 									* this.enemyShips.indexOf(column))
@@ -439,6 +442,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					this.logger.info("Destroyed ship in ("
 							+ this.enemyShips.indexOf(column) + "," + i + ")");
 				}
+		SoundManager.stopSound("boss",2f);
 
 		// Updates the list of ships that can shoot the player.
 		if (this.shooters.contains(destroyedShip)) {
