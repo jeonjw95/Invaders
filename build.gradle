@@ -1,0 +1,65 @@
+plugins {
+    id 'java-library'
+    id "io.sentry.jvm.gradle" version "4.0.0"
+}
+repositories {
+    mavenCentral()
+}
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "from-scratch-lx"
+    projectName = "invaders"
+    authToken = "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"
+
+}
+dependencies {
+    implementation group: 'io.sentry', name: 'sentry', version: '7.0.0'
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/']
+        }
+        resources {
+            srcDirs = ['res/']
+        }
+    }
+}
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'engine.Core'
+        )
+    }
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from sourceSets.test.output
+
+    exclude 'META-INF/*.md', 'module-info.class', 'screen/GameScreenTest$TestUpdate.class', 'screen/GameScreenTest$TestUpdate$TestSimulation.class',
+            'screen/GameScreenTest$TestUpdate$TestSimulation.class', 'screen/GameScreenTest.class', 'engine/SoundManagerTest.class', 'entity/BossAttackMechanismTest.class'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testCompileOnly 'org.projectlombok:lombok:1.18.20' // 테스트 의존성 추가
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20' // 테스트 의존성 추가
+}
+
+dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+
+
