@@ -18,43 +18,77 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-/** 테스트 클래스: GameScreenTest */
+/**
+ * 테스트 클래스: GameScreenTest
+ */
 class GameScreenTest {
 
-  /** 게임 화면의 너비 */
+  /**
+   * 게임 화면의 너비
+   */
   private static final int WIDTH = 448;
-  /** 게임 화면의 높이 */
+  /**
+   * 게임 화면의 높이
+   */
   private static final int HEIGHT = 520;
-  /** 초당 프레임 수 */
+  /**
+   * 초당 프레임 수
+   */
   private static final int FPS = 60;
-  /** 최대 목숨 수 */
+  /**
+   * 최대 목숨 수
+   */
   private static final int MAX_LIVES = 3;
-  /** 테스트 설정 : 실제 설정과 같은 설정 */
+  /**
+   * 테스트 설정 : 실제 설정과 같은 설정
+   */
   private static final GameSettings SETTINGS_BASE_LEVEL =
       new GameSettings(5, 4, 60, 2000);
-  /** 테스트 설정 : Ship이 빠르게 죽는 상황을 볼 수 있도록 설정 */
+  /**
+   * 테스트 설정 : Ship이 빠르게 죽는 상황을 볼 수 있도록 설정
+   */
   private static final GameSettings SETTINGS_MANY_ENEMYSHIPS =
       new GameSettings(10, 10, 40, 1);
-  /** 테스트 설정 : EnemyShip들이 빠르게 전멸하는 상황을 볼 수 있도록 설정 */
+  /**
+   * 테스트 설정 : EnemyShip들이 빠르게 전멸하는 상황을 볼 수 있도록 설정
+   */
   private static final GameSettings SETTINGS_ONE_ENEMYSHIP =
       new GameSettings(1, 1, 20, 10000);
-  /** 게임 상태 */
+  /**
+   * 게임 상태
+   */
   private static GameState gameState;
-  /** 게임 설정 리스트 */
+  /**
+   * 게임 설정 리스트
+   */
   private static List<GameSettings> gameSettings;
-  /** 테스트할 게임 화면 */
+  /**
+   * 테스트할 게임 화면
+   */
   private static GameScreen gameScreen;
-  /** 현재 게임 설정 */
+  /**
+   * 현재 게임 설정
+   */
   private static GameSettings currentGameSettings;
-  /** 현재 가상 스크린에 날아가고 있는 총알들*/
+  /**
+   * 현재 가상 스크린에 날아가고 있는 총알들
+   */
   private static Set<Bullet> bullets;
-  /** 현재 가상 스크린에 생성된 EnemyShipFormation*/
+  /**
+   * 현재 가상 스크린에 생성된 EnemyShipFormation
+   */
   private static EnemyShipFormation enemyShipFormation;
-  /** 현재 가상 스크린에 생성된 Ship*/
+  /**
+   * 현재 가상 스크린에 생성된 Ship
+   */
   private static Ship ship;
-  /** 테스트 레벨*/
+  /**
+   * 테스트 레벨
+   */
   private static int testLevel;
-  /** 보너스 목숨 여부*/
+  /**
+   * 보너스 목숨 여부
+   */
   private static boolean bonusLife;
   private static boolean test0;
   private static boolean test1;
@@ -64,8 +98,9 @@ class GameScreenTest {
   private static boolean test5;
 
 
-
-  /** 테스트 실행 전 설정 초기화*/
+  /**
+   * 테스트 실행 전 설정 초기화
+   */
   @BeforeAll
   static void setUp() {
     gameSettings = new ArrayList<GameSettings>();
@@ -86,7 +121,9 @@ class GameScreenTest {
     test5 = false;
   }
 
-  /** 각 테스트 메소드 실행 전 GameScreen 초기화*/
+  /**
+   * 각 테스트 메소드 실행 전 GameScreen 초기화
+   */
   @BeforeEach
   void initialize() {
     bonusLife = false;
@@ -130,7 +167,7 @@ class GameScreenTest {
 
   @Nested
   @DisplayName("update 메소드 테스트")
-  /**  update 메소드가 처리해야만 하는 상황들에 대한 테스트 */
+      /**  update 메소드가 처리해야만 하는 상황들에 대한 테스트 */
   class TestUpdate {
 
     @Test
@@ -224,7 +261,7 @@ class GameScreenTest {
 
     @Nested
     @DisplayName("가상게임 진행")
-    /** 가상게임을 진행하여 게임이 잘 끝나는지 확인 - 위에 있는 테스트들을 통과하는지에 따라 테스트 할지 말지 정해짐 */
+        /** 가상게임을 진행하여 게임이 잘 끝나는지 확인 - 위에 있는 테스트들을 통과하는지에 따라 테스트 할지 말지 정해짐 */
     class TestSimulation {
 
       @Test
@@ -239,8 +276,9 @@ class GameScreenTest {
         while (gameScreen.getLives() != 0 && test1 && test4 && test5) {
           int bulletsNum = bullets.size();
           // Enemyship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
-          if (enemyShipFormation.shoot(bullets) && bulletsNum == bullets.size())
+          if (enemyShipFormation.shoot(bullets) && bulletsNum == bullets.size()) {
             fail();
+          }
           gameScreen.update();
         }
         ship.update();
@@ -266,8 +304,9 @@ class GameScreenTest {
         while (!enemyShipFormation.isEmpty() && test2 && test3 && test5) {
           int bulletsNum = bullets.size();
           // ship이 shoot을 했는데 총알이 쏜 것으로 처리되지 않았다면 실패로 처리
-          if (ship.shoot(bullets) && bulletsNum == bullets.size())
+          if (ship.shoot(bullets) && bulletsNum == bullets.size()) {
             fail();
+          }
           gameScreen.update();
         }
 
@@ -279,7 +318,6 @@ class GameScreenTest {
       }
     }
   }
-
 
 
 }
