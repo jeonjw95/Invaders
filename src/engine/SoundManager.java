@@ -1,6 +1,7 @@
 package engine;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -17,8 +18,8 @@ public class SoundManager {
     new Thread(new Runnable() {
       public void run() {
         try {
-          File soundFile = new File(soundFilePath);
-          AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+          URL url = getClass().getResource(soundFilePath);
+          AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
           Clip clip = AudioSystem.getClip();
           clip.open(audioIn);
           if (isLoop) {
