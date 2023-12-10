@@ -19,6 +19,9 @@ class BossAttackMechanismTest {
 
   /** 테스트할 EnemyShipFormation 및 Bullet 객체. */
   private static EnemyShipFormation enemyShipFormation;
+  /** 임의 생성 ship 객체. */
+  private static Ship ship;
+  /** 임의 생성 Bullet Set. */
   private static Set<Bullet> bullets;
 
   /** 각 테스트 메소드 실행 전 초기화. */
@@ -26,8 +29,8 @@ class BossAttackMechanismTest {
   void initialize() {
     enemyShipFormation = new EnemyShipFormation(SETTINGS_BASE_LEVEL);
     enemyShipFormation.update();
+    ship = new Ship(0,0);
     bullets = new HashSet<>();
-    // 테스트를 위해 플래그 설정
     enemyShipFormation.setTesting(true);
   }
 
@@ -62,17 +65,34 @@ class BossAttackMechanismTest {
   @Test
   void testBossAttackMechanism3() {
     // 메커니즘3 실행
-    enemyShipFormation.bossAttackMechanism3(bullets);
+    enemyShipFormation.bossAttackMechanism3(bullets, ship);
 
     // 터닝 총알 인터벌이 무한대인지 확인
     assertEquals(enemyShipFormation.getTurningBulletsInterval(), INFINITE);
 
     // 테스팅 비활성화 후 메커니즘3 실행
     enemyShipFormation.setTesting(false);
-    enemyShipFormation.bossAttackMechanism3(bullets);
+    enemyShipFormation.bossAttackMechanism3(bullets, ship);
 
     // 터닝 총알 인터벌이 100인지 확인
     assertEquals(enemyShipFormation.getTurningBulletsInterval(), 100);
+  }
+
+  /** BossAttackMechanism4 테스트 */
+  @Test
+  void testBossAttackMechanism4() {
+    // 메커니즘4 실행
+    enemyShipFormation.bossAttackMechanism4(bullets, ship);
+
+    // 터닝 총알 인터벌이 무한대인지 확인
+    assertEquals(enemyShipFormation.getTurningBulletsInterval(), INFINITE);
+
+    // 테스팅 비활성화 후 메커니즘4 실행
+    enemyShipFormation.setTesting(false);
+    enemyShipFormation.bossAttackMechanism4(bullets, ship);
+
+    // 터닝 총알 인터벌이 300인지 확인
+    assertEquals(enemyShipFormation.getTurningBulletsInterval(), 300);
   }
 }
 

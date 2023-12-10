@@ -87,6 +87,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private Cooldown shootingTurningBulletsCooldown;
 
 	private Cooldown turningBulletsCooldown;
+
+	private Cooldown finalBossShootingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -312,6 +314,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			this.bossShootingCooldown = Core.getVariableCooldown(shootingInterval,
 					shootingVariance);
 			this.bossShootingCooldown.reset();
+			this.finalBossShootingCooldown = Core.getVariableCooldown(shootingInterval,
+					shootingVariance);
+			this.finalBossShootingCooldown.reset();
 		}
 		if(this.isLazerOn) {
 			this.lazerCooldown = Core.getCooldown(lazerInterval);
@@ -485,7 +490,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (int i = 0; i < 7; i++) {
 			bulletLocation[i] = (int) (Math.random() * shooter.width);
 		}
-		setShootingInterval(BOSS_SHOOTING_INTERVAL);
+		setShootingInterval(BOSS_SHOOTING_INTERVAL - (this.bossStage * 50));
 		if (this.bossShootingCooldown.checkFinished() || isTesting) {
 			this.bossShootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
@@ -526,7 +531,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 	}
 
-	public final void bossAttackMechanism3(final Set<Bullet> bullets) {
+	public final void bossAttackMechanism3(final Set<Bullet> bullets, final Ship ship) {
 		// For now, only ships in the bottom row are able to shoot.
 		EnemyShip shooter = this.shooters.get(0);
 		if(this.shootingTurningBulletsCooldown.checkMoreThan((int)(BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE)) || isTesting) {
@@ -543,15 +548,44 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				Bullet bullet = BulletPool.getBullet(shooter.getPositionX()
 								+ randomTurningBulletLocation, shooter.getPositionY() + shooter.height,
 						BULLET_SPEED);
-				if(randomTurningBulletLocation % 2 == 0) bullet.setIsTurningLeft();
-				else bullet.setIsTurningRight();
+				if(bullet.getPositionX() > ship.getPositionX()) bullet.setIsTurningRight();
+				else bullet.setIsTurningLeft();
 				bullets.add(bullet);
 			}
 		}
 	}
 
-
-
+	public final void bossAttackMechanism4(final Set<Bullet> bullets, final Ship ship) {
+		// For now, only ships in the bottom row are able to shoot.
+		EnemyShip shooter = this.shooters.get(0);
+		if(this.shootingTurningBulletsCooldown.checkMoreThan((int)(BOSS_SHOOTING_TURNING_BULLET_INTERVAL * BOSS_SHOOTING_TURNING_BULLET_RATE)) || isTesting) {
+			if(this.shootingTurningBulletsCooldown.checkFinished()) {
+				randomTurningBulletLocation = (int) (Math.random() * shooter.width);
+				this.shootingTurningBulletsCooldown.reset();
+			}
+			setTurningBulletsInterval(INFINITE);
+		}
+		else {
+			setTurningBulletsInterval(300);
+			if(this.turningBulletsCooldown.checkFinished()) {
+				this.turningBulletsCooldown.reset();
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							+ shooter.width, shooter.getPositionY() + shooter.height/4, BULLET_SPEED));
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							+ shooter.width, shooter.getPositionY() + shooter.height*3/4, BULLET_SPEED));
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							, shooter.getPositionY() + shooter.height/4, BULLET_SPEED));
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							, shooter.getPositionY() + shooter.height*3/4, BULLET_SPEED));
+					for(Bullet bullet : bullets) {
+						if (bullet.getPositionX() > ship.getPositionX())
+							bullet.setIsTurningRight();
+						else
+							bullet.setIsTurningLeft();
+					}
+			}
+		}
+		}
 
 	/**
 	 * Destroys a ship.

@@ -239,17 +239,17 @@ public class GameScreen extends Screen {
 			else if (this.bossStage == 5){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
-				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets, this.ship);
 			}
 			else if (this.bossStage == 6){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
-				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets, this.ship);
 			}
 			else if (this.bossStage == 7){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
-				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
+				this.enemyShipFormation.bossAttackMechanism4(this.turningBullets, this.ship);
 			}
 
 
