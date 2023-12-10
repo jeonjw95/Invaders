@@ -122,6 +122,7 @@ public class GameScreen extends Screen {
    * Checks if a bonus life is received.
    */
   private boolean bonusLife;
+
   private int bossStage;
 
   private @Setter boolean isTesting;
@@ -159,9 +160,9 @@ public class GameScreen extends Screen {
     this.level = gameState.getLevel();
     this.score = gameState.getScore();
     this.lives = gameState.getLivesRemaining();
-		if (this.bonusLife) {
-			this.lives++;
-		}
+    if (this.bonusLife) {
+      this.lives++;
+    }
     this.bulletsShot = gameState.getBulletsShot();
     this.shipsDestroyed = gameState.getShipsDestroyed();
     this.bossStage = gameSettings.getBossStage();
@@ -239,6 +240,7 @@ public class GameScreen extends Screen {
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
 
+
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
 				}
@@ -255,6 +257,7 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.move(2, 0);
 				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
 					this.enemyShipSpecial = null;
+
 
 			}
 			if (this.enemyShipSpecial == null
@@ -312,9 +315,9 @@ public class GameScreen extends Screen {
       this.screenFinishedCooldown.reset();
     }
 
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
-			this.isRunning = false;
-		}
+    if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
+      this.isRunning = false;
+    }
 
   }
 
@@ -326,13 +329,14 @@ public class GameScreen extends Screen {
 
     drawManager.drawEntity(this.ship, this.ship.getPositionX(),
         this.ship.getPositionY());
-		if (this.enemyShipSpecial != null) {
-			drawManager.drawEntity(this.enemyShipSpecial,
-					this.enemyShipSpecial.getPositionX(),
-					this.enemyShipSpecial.getPositionY());
-		}
+    if (this.enemyShipSpecial != null) {
+      drawManager.drawEntity(this.enemyShipSpecial,
+          this.enemyShipSpecial.getPositionX(),
+          this.enemyShipSpecial.getPositionY());
+    }
 
     enemyShipFormation.draw();
+
 
 		for (Bullet bullet : this.bullets) {
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
@@ -342,6 +346,7 @@ public class GameScreen extends Screen {
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
 		}
+
 
     // Interface.
     drawManager.drawScore(this, this.score);
@@ -353,8 +358,12 @@ public class GameScreen extends Screen {
       int countdown = (int) ((INPUT_DELAY
           - (System.currentTimeMillis()
           - this.gameStartTime)) / 1000);
-      drawManager.drawCountDown(this, this.level, countdown,
-          this.bonusLife);
+      if (bossStage == 0) {
+        drawManager.drawCountDown(this, this.level, countdown,
+            this.bonusLife);
+      } else {
+        drawManager.drawBossCountDown(this, countdown);
+      }
       drawManager.drawHorizontalLine(this, this.height / 2 - this.height
           / 12);
       drawManager.drawHorizontalLine(this, this.height / 2 + this.height
@@ -371,6 +380,7 @@ public class GameScreen extends Screen {
     Set<Bullet> recyclable = new HashSet<Bullet>();
     for (Bullet bullet : this.bullets) {
       bullet.update();
+
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
 					|| bullet.getPositionY() > this.height)
 				recyclable.add(bullet);
@@ -393,6 +403,7 @@ public class GameScreen extends Screen {
         bullet.setFirstTouchX();
         bullet.setFirstTouchY();
         recyclableTurning.add(bullet);
+
       }
     }
 
@@ -405,6 +416,7 @@ public class GameScreen extends Screen {
    */
   private void manageCollisions() {
     Set<Bullet> recyclable = new HashSet<Bullet>();
+
     Set<Bullet> recyclableTurning = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets) {
 			if (bullet.getSpeedY() > 0) {
@@ -458,6 +470,7 @@ public class GameScreen extends Screen {
           this.lives--;
           this.logger.info("Hit on player ship, " + this.lives
               + " lives remaining.");
+
         }
       }
     }
