@@ -8,33 +8,49 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-/** 테스트 클래스: BossAttackMechanismTest */
+/**
+ * 테스트 클래스: BossAttackMechanismTest
+ */
 class BossAttackMechanismTest {
 
-  /** 무한대 상수. */
+  /**
+   * 무한대 상수.
+   */
   private static final int INFINITE = 99999;
-  /** 기본 레벨 설정. */
+  /**
+   * 기본 레벨 설정.
+   */
   private static final GameSettings SETTINGS_BASE_LEVEL =
       new GameSettings(5, 4, 60, 2000);
 
-  /** 테스트할 EnemyShipFormation 및 Bullet 객체. */
+  /**
+   * 테스트할 EnemyShipFormation 및 Bullet 객체.
+   */
   private static EnemyShipFormation enemyShipFormation;
-  /** 임의 생성 ship 객체. */
+  /**
+   * 임의 생성 ship 객체.
+   */
   private static Ship ship;
-  /** 임의 생성 Bullet Set. */
+  /**
+   * 임의 생성 Bullet Set.
+   */
   private static Set<Bullet> bullets;
 
-  /** 각 테스트 메소드 실행 전 초기화. */
+  /**
+   * 각 테스트 메소드 실행 전 초기화.
+   */
   @BeforeEach
   void initialize() {
     enemyShipFormation = new EnemyShipFormation(SETTINGS_BASE_LEVEL);
     enemyShipFormation.update();
-    ship = new Ship(0,0);
+    ship = new Ship(0, 0);
     bullets = new HashSet<>();
     enemyShipFormation.setTesting(true);
   }
 
-  /** BossAttackMechanism1 테스트 */
+  /**
+   * BossAttackMechanism1 테스트
+   */
   @Test
   void testBossAttackMechanism1() {
     // 메커니즘1 실행
@@ -44,7 +60,9 @@ class BossAttackMechanismTest {
     assertEquals(7, bullets.size());
   }
 
-  /** BossAttackMechanism2 테스트 */
+  /**
+   * BossAttackMechanism2 테스트
+   */
   @Test
   void testBossAttackMechanism2() {
     // 메커니즘2 실행
@@ -61,7 +79,9 @@ class BossAttackMechanismTest {
     assertEquals(enemyShipFormation.getLazerInterval(), 1);
   }
 
-  /** BossAttackMechanism3 테스트 */
+  /**
+   * BossAttackMechanism3 테스트
+   */
   @Test
   void testBossAttackMechanism3() {
     // 메커니즘3 실행
@@ -78,7 +98,9 @@ class BossAttackMechanismTest {
     assertEquals(enemyShipFormation.getTurningBulletsInterval(), 100);
   }
 
-  /** BossAttackMechanism4 테스트 */
+  /**
+   * BossAttackMechanism4 테스트
+   */
   @Test
   void testBossAttackMechanism4() {
     // 메커니즘4 실행
