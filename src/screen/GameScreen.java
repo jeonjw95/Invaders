@@ -58,6 +58,8 @@ public class GameScreen extends Screen {
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
 	private @Getter Set<Bullet> bullets;
+	/** Set of all turning bullets fired by on screen ships. */
+	private Set<Bullet> turningBullets;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -134,6 +136,7 @@ public class GameScreen extends Screen {
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+		this.turningBullets = new HashSet<Bullet>();
 
 		if (isHpSelected) {
 			this.lives++; isHpSelected = false;
@@ -236,14 +239,17 @@ public class GameScreen extends Screen {
 			else if (this.bossStage == 5){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
 			}
 			else if (this.bossStage == 6){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
 			}
 			else if (this.bossStage == 7){
 				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
 				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets);
 			}
 
 
@@ -251,6 +257,7 @@ public class GameScreen extends Screen {
 
 		manageCollisions();
 		cleanBullets();
+		cleanTurningBullets();
 		draw();
 
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
@@ -280,6 +287,9 @@ public class GameScreen extends Screen {
 		enemyShipFormation.draw();
 
 		for (Bullet bullet : this.bullets)
+			drawManager.drawEntity(bullet, bullet.getPositionX(),
+					bullet.getPositionY());
+		for (Bullet bullet : this.turningBullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
 
@@ -319,13 +329,32 @@ public class GameScreen extends Screen {
 		BulletPool.recycle(recyclable);
 	}
 
+	private void cleanTurningBullets() {
+		Set<Bullet> recyclableTurning = new HashSet<Bullet>();
+		for (Bullet bullet : this.turningBullets) {
+			if(bullet.getIsTurning() == 1) bullet.turnLeft();
+			else bullet.turnRight();
+			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
+					|| bullet.getPositionY() > this.height) {
+				bullet.setSpeed(4);
+				bullet.setFirstTouchX();
+				bullet.setFirstTouchY();
+				recyclableTurning.add(bullet);
+			}
+		}
+
+		this.turningBullets.removeAll(recyclableTurning);
+		BulletPool.recycle(recyclableTurning);
+	}
+
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
 	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
+		Set<Bullet> recyclableTurning = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) {
+			if (bullet.getSpeedY() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
@@ -366,8 +395,21 @@ public class GameScreen extends Screen {
 					recyclable.add(bullet);
 				}
 			}
+		for (Bullet bullet : this.turningBullets){
+			if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+				recyclableTurning.add(bullet);
+				if (!this.ship.isDestroyed()) {
+					this.ship.destroy();
+					this.lives--;
+					this.logger.info("Hit on player ship, " + this.lives
+							+ " lives remaining.");
+				}
+			}
+		}
 		this.bullets.removeAll(recyclable);
+		this.turningBullets.removeAll(recyclableTurning);
 		BulletPool.recycle(recyclable);
+		BulletPool.recycle(recyclableTurning);
 	}
 
 	/**
