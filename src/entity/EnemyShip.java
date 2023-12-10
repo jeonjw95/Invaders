@@ -177,11 +177,11 @@ public class EnemyShip extends Entity {
    */
   public final void destroy() {
     this.isDestroyed = true;
-		if (this.isBoss) {
-			this.spriteType = SpriteType.BossExplosion;
-		} else {
-			this.spriteType = SpriteType.Explosion;
-		}
+    if (this.isBoss) {
+      this.spriteType = SpriteType.BossExplosion;
+    } else {
+      this.spriteType = SpriteType.Explosion;
+    }
   }
 
   /**

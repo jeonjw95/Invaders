@@ -19,8 +19,9 @@ import lombok.Setter;
 
 /**
  * Implements the game screen, where the action happens.
- *
+ * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
+ * 
  */
 public class GameScreen extends Screen {
 
@@ -89,6 +90,10 @@ public class GameScreen extends Screen {
    * Set of all bullets fired by on screen ships.
    */
   private @Getter Set<Bullet> bullets;
+  /**
+   * Set of all turning bullets fired by on screen ships.
+   */
+  private Set<Bullet> turningBullets;
   /**
    * Current score.
    */
@@ -181,6 +186,7 @@ public class GameScreen extends Screen {
         .getCooldown(BONUS_SHIP_EXPLOSION);
     this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
     this.bullets = new HashSet<Bullet>();
+    this.turningBullets = new HashSet<Bullet>();
 
     if (isHpSelected) {
       this.lives++;
@@ -223,57 +229,84 @@ public class GameScreen extends Screen {
 
     if (this.inputDelay.checkFinished() && !this.levelFinished || isTesting) {
 
-      if (!this.ship.isDestroyed()) {
-        boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-            || inputManager.isKeyDown(KeyEvent.VK_D);
-        boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-            || inputManager.isKeyDown(KeyEvent.VK_A);
+			if (!this.ship.isDestroyed()) {
+				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+						|| inputManager.isKeyDown(KeyEvent.VK_D);
+				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+						|| inputManager.isKeyDown(KeyEvent.VK_A);
 
-        boolean isRightBorder = this.ship.getPositionX()
-            + this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-        boolean isLeftBorder = this.ship.getPositionX()
-            - this.ship.getSpeed() < 1;
+				boolean isRightBorder = this.ship.getPositionX()
+						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+				boolean isLeftBorder = this.ship.getPositionX()
+						- this.ship.getSpeed() < 1;
 
-        if (moveRight && !isRightBorder) {
-          this.ship.moveRight();
-        }
-        if (moveLeft && !isLeftBorder) {
-          this.ship.moveLeft();
-        }
-        if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-          if (this.ship.shoot(this.bullets)) {
-            this.bulletsShot++;
-          }
-        }
-      }
 
-      if (this.enemyShipSpecial != null) {
-        if (!this.enemyShipSpecial.isDestroyed()) {
-          this.enemyShipSpecial.move(2, 0);
-        } else if (this.enemyShipSpecialExplosionCooldown.checkFinished()) {
-          this.enemyShipSpecial = null;
-        }
+				if (moveRight && !isRightBorder) {
+					this.ship.moveRight();
+				}
+				if (moveLeft && !isLeftBorder) {
+					this.ship.moveLeft();
+				}
+				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+					if (this.ship.shoot(this.bullets))
+						this.bulletsShot++;
+			}
 
-      }
-      if (this.enemyShipSpecial == null
-          && this.enemyShipSpecialCooldown.checkFinished()) {
-        this.enemyShipSpecial = new EnemyShip();
-        this.enemyShipSpecialCooldown.reset();
-        this.logger.info("A special ship appears");
-      }
-      if (this.enemyShipSpecial != null
-          && this.enemyShipSpecial.getPositionX() > this.width) {
-        this.enemyShipSpecial = null;
-        this.logger.info("The special ship has escaped");
-      }
+			if (this.enemyShipSpecial != null) {
+				if (!this.enemyShipSpecial.isDestroyed())
+					this.enemyShipSpecial.move(2, 0);
+				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+					this.enemyShipSpecial = null;
+
+
+			}
+			if (this.enemyShipSpecial == null
+					&& this.enemyShipSpecialCooldown.checkFinished()) {
+				this.enemyShipSpecial = new EnemyShip();
+				this.enemyShipSpecialCooldown.reset();
+				this.logger.info("A special ship appears");
+			}
+			if (this.enemyShipSpecial != null
+					&& this.enemyShipSpecial.getPositionX() > this.width) {
+				this.enemyShipSpecial = null;
+				this.logger.info("The special ship has escaped");
+			}
 
       this.ship.update();
       this.enemyShipFormation.update();
-      this.enemyShipFormation.shoot(this.bullets);
+
+			if (this.bossStage == 0) {
+				this.enemyShipFormation.shoot(this.bullets);
+			} else if (this.bossStage == 1) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			} else if (this.bossStage == 2) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+			} else if (this.bossStage == 3) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+			} else if (this.bossStage == 4) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+			} else if (this.bossStage == 5) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets, this.ship);
+			} else if (this.bossStage == 6) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism3(this.turningBullets, this.ship);
+			} else if (this.bossStage == 7) {
+				this.enemyShipFormation.bossAttackMechanism1(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism2(this.bullets);
+				this.enemyShipFormation.bossAttackMechanism4(this.turningBullets, this.ship);
+			}
+
+
     }
 
     manageCollisions();
     cleanBullets();
+    cleanTurningBullets();
     draw();
 
     if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
@@ -304,10 +337,16 @@ public class GameScreen extends Screen {
 
     enemyShipFormation.draw();
 
-    for (Bullet bullet : this.bullets) {
-      drawManager.drawEntity(bullet, bullet.getPositionX(),
-          bullet.getPositionY());
-    }
+
+		for (Bullet bullet : this.bullets) {
+			drawManager.drawEntity(bullet, bullet.getPositionX(),
+					bullet.getPositionY());
+		}
+		for (Bullet bullet : this.turningBullets) {
+			drawManager.drawEntity(bullet, bullet.getPositionX(),
+					bullet.getPositionY());
+		}
+
 
     // Interface.
     drawManager.drawScore(this, this.score);
@@ -341,13 +380,35 @@ public class GameScreen extends Screen {
     Set<Bullet> recyclable = new HashSet<Bullet>();
     for (Bullet bullet : this.bullets) {
       bullet.update();
+
+			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
+					|| bullet.getPositionY() > this.height)
+				recyclable.add(bullet);
+		}
+		this.bullets.removeAll(recyclable);
+		BulletPool.recycle(recyclable);
+	}
+
+  private void cleanTurningBullets() {
+    Set<Bullet> recyclableTurning = new HashSet<Bullet>();
+    for (Bullet bullet : this.turningBullets) {
+			if (bullet.getIsTurning() == 1) {
+				bullet.turnLeft();
+			} else {
+				bullet.turnRight();
+			}
       if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
           || bullet.getPositionY() > this.height) {
-        recyclable.add(bullet);
+        bullet.setSpeed(4);
+        bullet.setFirstTouchX();
+        bullet.setFirstTouchY();
+        recyclableTurning.add(bullet);
+
       }
     }
-    this.bullets.removeAll(recyclable);
-    BulletPool.recycle(recyclable);
+
+    this.turningBullets.removeAll(recyclableTurning);
+    BulletPool.recycle(recyclableTurning);
   }
 
   /**
@@ -355,52 +416,68 @@ public class GameScreen extends Screen {
    */
   private void manageCollisions() {
     Set<Bullet> recyclable = new HashSet<Bullet>();
-    for (Bullet bullet : this.bullets) {
-      if (bullet.getSpeed() > 0) {
-        if (checkCollision(bullet, this.ship) && !this.levelFinished) {
-          recyclable.add(bullet);
-          if (!this.ship.isDestroyed()) {
-            this.ship.destroy();
-            this.lives--;
-            this.logger.info("Hit on player ship, " + this.lives
-                + " lives remaining.");
-          }
-        }
-      } else {
-        for (EnemyShip enemyShip : this.enemyShipFormation) {
-          if (!enemyShip.isDestroyed()
-              && checkCollision(bullet, enemyShip)) {
-            if (!enemyShip.isBoss()) {
-              this.score += enemyShip.getPointValue();
-              this.shipsDestroyed++;
-              this.enemyShipFormation.destroy(enemyShip);
-              recyclable.add(bullet);
-            } else {
-              if (enemyShip.isHpValue() > 1) {
-                enemyShip.getDamage(1);
-                recyclable.add(bullet);
-              } else {
-                this.score += enemyShip.getPointValue();
-                this.shipsDestroyed++;
-                this.enemyShipFormation.destroy(enemyShip);
-                recyclable.add(bullet);
-              }
-            }
-          }
-        }
-        if (this.enemyShipSpecial != null
-            && !this.enemyShipSpecial.isDestroyed()
-            && checkCollision(bullet, this.enemyShipSpecial)) {
-          this.score += this.enemyShipSpecial.getPointValue();
-          this.shipsDestroyed++;
-          this.enemyShipSpecial.destroy();
-          this.enemyShipSpecialExplosionCooldown.reset();
-          recyclable.add(bullet);
+
+    Set<Bullet> recyclableTurning = new HashSet<Bullet>();
+		for (Bullet bullet : this.bullets) {
+			if (bullet.getSpeedY() > 0) {
+				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+					recyclable.add(bullet);
+					if (!this.ship.isDestroyed()) {
+						this.ship.destroy();
+						this.lives--;
+						this.logger.info("Hit on player ship, " + this.lives
+								+ " lives remaining.");
+					}
+				}
+			} else {
+				for (EnemyShip enemyShip : this.enemyShipFormation) {
+					if (!enemyShip.isDestroyed()
+							&& checkCollision(bullet, enemyShip)) {
+						if (!enemyShip.isBoss()) {
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
+							this.enemyShipFormation.destroy(enemyShip);
+							recyclable.add(bullet);
+						} else {
+							if (enemyShip.isHpValue() > 1) {
+								enemyShip.getDamage(1);
+								recyclable.add(bullet);
+							} else {
+								this.score += enemyShip.getPointValue();
+								this.shipsDestroyed++;
+								this.enemyShipFormation.destroy(enemyShip);
+								recyclable.add(bullet);
+							}
+						}
+					}
+				}
+				if (this.enemyShipSpecial != null
+						&& !this.enemyShipSpecial.isDestroyed()
+						&& checkCollision(bullet, this.enemyShipSpecial)) {
+					this.score += this.enemyShipSpecial.getPointValue();
+					this.shipsDestroyed++;
+					this.enemyShipSpecial.destroy();
+					this.enemyShipSpecialExplosionCooldown.reset();
+					recyclable.add(bullet);
+				}
+			}
+		}
+    for (Bullet bullet : this.turningBullets) {
+      if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+        recyclableTurning.add(bullet);
+        if (!this.ship.isDestroyed()) {
+          this.ship.destroy();
+          this.lives--;
+          this.logger.info("Hit on player ship, " + this.lives
+              + " lives remaining.");
+
         }
       }
     }
     this.bullets.removeAll(recyclable);
+    this.turningBullets.removeAll(recyclableTurning);
     BulletPool.recycle(recyclable);
+    BulletPool.recycle(recyclableTurning);
   }
 
   /**
