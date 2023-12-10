@@ -55,10 +55,10 @@ public class Cooldown {
    * @return Cooldown state.
    */
   public final boolean checkFinished() {
-		if ((this.time == 0)
-				|| this.time + this.duration < System.currentTimeMillis()) {
-			return true;
-		}
+    if ((this.time == 0)
+        || this.time + this.duration < System.currentTimeMillis()) {
+      return true;
+    }
     return false;
   }
 
@@ -67,11 +67,11 @@ public class Cooldown {
    */
   public final void reset() {
     this.time = System.currentTimeMillis();
-		if (this.variance != 0) {
-			this.duration = (this.milliseconds - this.variance)
-					+ (int) (Math.random()
-					* (this.milliseconds + this.variance));
-		}
+    if (this.variance != 0) {
+      this.duration = (this.milliseconds - this.variance)
+          + (int) (Math.random()
+          * (this.milliseconds + this.variance));
+    }
   }
 
   /**
@@ -81,9 +81,9 @@ public class Cooldown {
    * @return Cooldown state.
    */
   public final boolean checkMoreThan(int checkTime) {
-		if (this.time + checkTime / 2 < System.currentTimeMillis()) {
-			return true;
-		}
+    if (this.time + checkTime / 2 < System.currentTimeMillis()) {
+      return true;
+    }
     return false;
   }
 

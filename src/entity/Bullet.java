@@ -44,11 +44,11 @@ public class Bullet extends Entity {
    * Sets correct sprite for the bullet, based on speed.
    */
   public final void setSprite() {
-		if (speedY < 0) {
-			this.spriteType = SpriteType.Bullet;
-		} else {
-			this.spriteType = SpriteType.EnemyBullet;
-		}
+    if (speedY < 0) {
+      this.spriteType = SpriteType.Bullet;
+    } else {
+      this.spriteType = SpriteType.EnemyBullet;
+    }
   }
 
   /**
@@ -61,39 +61,39 @@ public class Bullet extends Entity {
   public final void turnLeft() {
     this.positionX += this.speedX;
     this.positionY += this.speedY;
-		if (this.speedX > -6 && !this.firstTouchX) {
-			this.speedX -= 1;
-		} else if (this.speedX == -6 && !this.firstTouchX) {
-			this.firstTouchX = true;
-		} else {
-			this.speedX += 1;
-		}
-		if (this.speedY > -6 && !this.firstTouchY) {
-			this.speedY -= 1;
-		} else if (this.speedY == -6 && !this.firstTouchY) {
-			this.firstTouchY = true;
-		} else {
-			this.speedY += 1;
-		}
+    if (this.speedX > -6 && !this.firstTouchX) {
+      this.speedX -= 1;
+    } else if (this.speedX == -6 && !this.firstTouchX) {
+      this.firstTouchX = true;
+    } else {
+      this.speedX += 1;
+    }
+    if (this.speedY > -6 && !this.firstTouchY) {
+      this.speedY -= 1;
+    } else if (this.speedY == -6 && !this.firstTouchY) {
+      this.firstTouchY = true;
+    } else {
+      this.speedY += 1;
+    }
   }
 
   public final void turnRight() {
     this.positionX -= this.speedX;
     this.positionY += this.speedY;
-		if (this.speedX > -6 && !this.firstTouchX) {
-			this.speedX -= 1;
-		} else if (this.speedX == -6 && !this.firstTouchX) {
-			this.firstTouchX = true;
-		} else {
-			this.speedX += 1;
-		}
-		if (this.speedY > -6 && !this.firstTouchY) {
-			this.speedY -= 1;
-		} else if (this.speedY == -6 && !this.firstTouchY) {
-			this.firstTouchY = true;
-		} else {
-			this.speedY += 1;
-		}
+    if (this.speedX > -6 && !this.firstTouchX) {
+      this.speedX -= 1;
+    } else if (this.speedX == -6 && !this.firstTouchX) {
+      this.firstTouchX = true;
+    } else {
+      this.speedX += 1;
+    }
+    if (this.speedY > -6 && !this.firstTouchY) {
+      this.speedY -= 1;
+    } else if (this.speedY == -6 && !this.firstTouchY) {
+      this.firstTouchY = true;
+    } else {
+      this.speedY += 1;
+    }
   }
 
   /**

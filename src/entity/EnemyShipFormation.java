@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import java.time.LocalDateTime;
 
 
+import engine.*;
 import lombok.Getter;
 import lombok.Setter;
 import screen.Screen;
@@ -273,21 +274,21 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
         + " ship formation in (" + positionX + "," + positionY + ")");
 
     // Each sub-list is a column on the formation.
-		for (int i = 0; i < this.nShipsWide; i++) {
-			this.enemyShips.add(new ArrayList<EnemyShip>());
-		}
+    for (int i = 0; i < this.nShipsWide; i++) {
+      this.enemyShips.add(new ArrayList<EnemyShip>());
+    }
 
     if (bossStage == 0) {
       for (List<EnemyShip> column : this.enemyShips) {
         for (int i = 0; i < this.nShipsHigh; i++) {
-					if (i / (float) this.nShipsHigh < PROPORTION_C) {
-						spriteType = SpriteType.EnemyShipC1;
-					} else if (i / (float) this.nShipsHigh < PROPORTION_B
-							+ PROPORTION_C) {
-						spriteType = SpriteType.EnemyShipB1;
-					} else {
-						spriteType = SpriteType.EnemyShipA1;
-					}
+          if (i / (float) this.nShipsHigh < PROPORTION_C) {
+            spriteType = SpriteType.EnemyShipC1;
+          } else if (i / (float) this.nShipsHigh < PROPORTION_B
+              + PROPORTION_C) {
+            spriteType = SpriteType.EnemyShipB1;
+          } else {
+            spriteType = SpriteType.EnemyShipA1;
+          }
 
           column.add(new EnemyShip((SEPARATION_DISTANCE
               * this.enemyShips.indexOf(column))
@@ -301,6 +302,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
         for (int i = 0; i < this.nShipsHigh; i++) {
           switch (this.bossStage) {
             case 1:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossA;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -309,6 +311,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               this.shipCount++;
               break;
             case 2:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossA;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -317,6 +320,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               this.shipCount++;
               break;
             case 3:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossB;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -325,6 +329,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               this.shipCount++;
               break;
             case 4:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossB;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -333,6 +338,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               this.shipCount++;
               break;
             case 5:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossC;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -341,6 +347,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
               this.shipCount++;
               break;
             case 6:
+              SoundManager.playSound("res/WelcomeToTheHell.wav", "boss", true, true, 2f);
               spriteType = SpriteType.BossC;
               column.add(new EnemyShip((SEPARATION_DISTANCE
                   * this.enemyShips.indexOf(column))
@@ -369,9 +376,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
     this.height = (this.nShipsHigh - 1) * SEPARATION_DISTANCE
         + this.shipHeight;
 
-		for (List<EnemyShip> column : this.enemyShips) {
-			this.shooters.add(column.get(column.size() - 1));
-		}
+    for (List<EnemyShip> column : this.enemyShips) {
+      this.shooters.add(column.get(column.size() - 1));
+    }
   }
 
   /**
@@ -387,12 +394,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * Draws every individual component of the formation.
    */
   public final void draw() {
-		for (List<EnemyShip> column : this.enemyShips) {
-			for (EnemyShip enemyShip : column) {
-				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
-						enemyShip.getPositionY());
-			}
-		}
+    for (List<EnemyShip> column : this.enemyShips) {
+      for (EnemyShip enemyShip : column) {
+        drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
+            enemyShip.getPositionY());
+      }
+    }
   }
 
   /**
@@ -451,46 +458,46 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
       boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 
       if (currentDirection == Direction.DOWN) {
-				if (isAtHorizontalAltitude) {
-					if (previousDirection == Direction.RIGHT) {
-						currentDirection = Direction.LEFT;
-						this.logger.info("Formation now moving left 1");
-					} else {
-						currentDirection = Direction.RIGHT;
-						this.logger.info("Formation now moving right 2");
-					}
-				}
+        if (isAtHorizontalAltitude) {
+          if (previousDirection == Direction.RIGHT) {
+            currentDirection = Direction.LEFT;
+            this.logger.info("Formation now moving left 1");
+          } else {
+            currentDirection = Direction.RIGHT;
+            this.logger.info("Formation now moving right 2");
+          }
+        }
       } else if (currentDirection == Direction.LEFT) {
-				if (isAtLeftSide) {
-					if (!isAtBottom) {
-						previousDirection = currentDirection;
-						currentDirection = Direction.DOWN;
-						this.logger.info("Formation now moving down 3");
-					} else {
-						currentDirection = Direction.RIGHT;
-						this.logger.info("Formation now moving right 4");
-					}
-				}
+        if (isAtLeftSide) {
+          if (!isAtBottom) {
+            previousDirection = currentDirection;
+            currentDirection = Direction.DOWN;
+            this.logger.info("Formation now moving down 3");
+          } else {
+            currentDirection = Direction.RIGHT;
+            this.logger.info("Formation now moving right 4");
+          }
+        }
       } else {
-				if (isAtRightSide) {
-					if (!isAtBottom) {
-						previousDirection = currentDirection;
-						currentDirection = Direction.DOWN;
-						this.logger.info("Formation now moving down 5");
-					} else {
-						currentDirection = Direction.LEFT;
-						this.logger.info("Formation now moving left 6");
-					}
-				}
+        if (isAtRightSide) {
+          if (!isAtBottom) {
+            previousDirection = currentDirection;
+            currentDirection = Direction.DOWN;
+            this.logger.info("Formation now moving down 5");
+          } else {
+            currentDirection = Direction.LEFT;
+            this.logger.info("Formation now moving left 6");
+          }
+        }
       }
 
-			if (currentDirection == Direction.RIGHT) {
-				movementX = X_SPEED;
-			} else if (currentDirection == Direction.LEFT) {
-				movementX = -X_SPEED;
-			} else {
-				movementY = Y_SPEED;
-			}
+      if (currentDirection == Direction.RIGHT) {
+        movementX = X_SPEED;
+      } else if (currentDirection == Direction.LEFT) {
+        movementX = -X_SPEED;
+      } else {
+        movementY = Y_SPEED;
+      }
 
       positionX += movementX;
       positionY += movementY;
@@ -510,12 +517,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
         column.removeAll(destroyed);
       }
 
-			for (List<EnemyShip> column : this.enemyShips) {
-				for (EnemyShip enemyShip : column) {
-					enemyShip.move(movementX, movementY);
-					enemyShip.update();
-				}
-			}
+      for (List<EnemyShip> column : this.enemyShips) {
+        for (EnemyShip enemyShip : column) {
+          enemyShip.move(movementX, movementY);
+          enemyShip.update();
+        }
+      }
     }
   }
 
@@ -549,9 +556,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
     for (List<EnemyShip> column : this.enemyShips) {
       if (!column.isEmpty()) {
-				if (leftMostPoint == 0) {
-					leftMostPoint = column.get(0).getPositionX();
-				}
+        if (leftMostPoint == 0) {
+          leftMostPoint = column.get(0).getPositionX();
+        }
         rightMostPoint = column.get(0).getPositionX();
       }
     }
@@ -648,11 +655,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
         Bullet bullet = BulletPool.getBullet(shooter.getPositionX()
                 + randomTurningBulletLocation, shooter.getPositionY() + shooter.height,
             BULLET_SPEED);
-				if (bullet.getPositionX() > ship.getPositionX()) {
-					bullet.setIsTurningRight();
-				} else {
-					bullet.setIsTurningLeft();
-				}
+        if (bullet.getPositionX() > ship.getPositionX()) {
+          bullet.setIsTurningRight();
+        } else {
+          bullet.setIsTurningLeft();
+        }
         bullets.add(bullet);
       }
     }
@@ -682,11 +689,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
         bullets.add(BulletPool.getBullet(shooter.getPositionX()
             , shooter.getPositionY() + shooter.height * 3 / 4, BULLET_SPEED));
         for (Bullet bullet : bullets) {
-					if (bullet.getPositionX() > ship.getPositionX()) {
-						bullet.setIsTurningRight();
-					} else {
-						bullet.setIsTurningLeft();
-					}
+          if (bullet.getPositionX() > ship.getPositionX()) {
+            bullet.setIsTurningRight();
+          } else {
+            bullet.setIsTurningLeft();
+          }
         }
       }
     }
@@ -698,38 +705,39 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
    * @param destroyedShip Ship to be destroyed.
    */
   public final void destroy(final EnemyShip destroyedShip) {
-		for (List<EnemyShip> column : this.enemyShips) {
-			for (int i = 0; i < column.size(); i++) {
-				if (column.get(i).equals(destroyedShip)) {
-					column.get(i).destroy();
-					this.logger.info("Destroyed ship in ("
-							+ this.enemyShips.indexOf(column) + "," + i + ")");
-				}
-			}
-		}
+    for (List<EnemyShip> column : this.enemyShips) {
+      for (int i = 0; i < column.size(); i++) {
+        if (column.get(i).equals(destroyedShip)) {
+          column.get(i).destroy();
+          this.logger.info("Destroyed ship in ("
+              + this.enemyShips.indexOf(column) + "," + i + ")");
+        }
+      }
+    }
+    SoundManager.stopSound("boss", 2f);
 
     // Updates the list of ships that can shoot the player.
     if (this.shooters.contains(destroyedShip)) {
       int destroyedShipIndex = this.shooters.indexOf(destroyedShip);
       int destroyedShipColumnIndex = -1;
 
-			for (List<EnemyShip> column : this.enemyShips) {
-				if (column.contains(destroyedShip)) {
-					destroyedShipColumnIndex = this.enemyShips.indexOf(column);
-					break;
-				}
-			}
+      for (List<EnemyShip> column : this.enemyShips) {
+        if (column.contains(destroyedShip)) {
+          destroyedShipColumnIndex = this.enemyShips.indexOf(column);
+          break;
+        }
+      }
 
       EnemyShip nextShooter = getNextShooter(this.enemyShips
           .get(destroyedShipColumnIndex));
 
-			if (nextShooter != null) {
-				this.shooters.set(destroyedShipIndex, nextShooter);
-			} else {
-				this.shooters.remove(destroyedShipIndex);
-				this.logger.info("Shooters list reduced to "
-						+ this.shooters.size() + " members.");
-			}
+      if (nextShooter != null) {
+        this.shooters.set(destroyedShipIndex, nextShooter);
+      } else {
+        this.shooters.remove(destroyedShipIndex);
+        this.logger.info("Shooters list reduced to "
+            + this.shooters.size() + " members.");
+      }
     }
 
     this.shipCount--;
@@ -746,9 +754,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
     EnemyShip nextShooter = null;
     while (iterator.hasNext()) {
       EnemyShip checkShip = iterator.next();
-			if (checkShip != null && !checkShip.isDestroyed()) {
-				nextShooter = checkShip;
-			}
+      if (checkShip != null && !checkShip.isDestroyed()) {
+        nextShooter = checkShip;
+      }
     }
 
     return nextShooter;
@@ -763,11 +771,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
   public final Iterator<EnemyShip> iterator() {
     Set<EnemyShip> enemyShipsList = new HashSet<EnemyShip>();
 
-		for (List<EnemyShip> column : this.enemyShips) {
-			for (EnemyShip enemyShip : column) {
-				enemyShipsList.add(enemyShip);
-			}
-		}
+    for (List<EnemyShip> column : this.enemyShips) {
+      for (EnemyShip enemyShip : column) {
+        enemyShipsList.add(enemyShip);
+      }
+    }
 
     return enemyShipsList.iterator();
   }
@@ -782,29 +790,29 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
   }
 
   public void setShootingInterval(int shootingInterval) {
-		if (this.shootingInterval != shootingInterval) {
-			this.shootingInterval = shootingInterval;
-			this.isShootingIntervalChanged = true;
-		} else {
-			this.isShootingIntervalChanged = false;
-		}
+    if (this.shootingInterval != shootingInterval) {
+      this.shootingInterval = shootingInterval;
+      this.isShootingIntervalChanged = true;
+    } else {
+      this.isShootingIntervalChanged = false;
+    }
   }
 
   public void setLazerInterval(int lazerInterval) {
-		if (this.lazerInterval != lazerInterval) {
-			this.lazerInterval = lazerInterval;
-			this.isLazerOn = true;
-		} else {
-			this.isLazerOn = false;
-		}
+    if (this.lazerInterval != lazerInterval) {
+      this.lazerInterval = lazerInterval;
+      this.isLazerOn = true;
+    } else {
+      this.isLazerOn = false;
+    }
   }
 
   public void setTurningBulletsInterval(int turningBulletsInterval) {
-		if (this.turningBulletsInterval != turningBulletsInterval) {
-			this.turningBulletsInterval = turningBulletsInterval;
-			this.isTurningBulletsOn = true;
-		} else {
-			this.isTurningBulletsOn = false;
-		}
+    if (this.turningBulletsInterval != turningBulletsInterval) {
+      this.turningBulletsInterval = turningBulletsInterval;
+      this.isTurningBulletsOn = true;
+    } else {
+      this.isTurningBulletsOn = false;
+    }
   }
 }

@@ -19,8 +19,9 @@ import lombok.Setter;
 
 /**
  * Implements the game screen, where the action happens.
- *
+ * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
+ * 
  */
 public class GameScreen extends Screen {
 
@@ -227,49 +228,46 @@ public class GameScreen extends Screen {
 
     if (this.inputDelay.checkFinished() && !this.levelFinished || isTesting) {
 
-      if (!this.ship.isDestroyed()) {
-        boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-            || inputManager.isKeyDown(KeyEvent.VK_D);
-        boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-            || inputManager.isKeyDown(KeyEvent.VK_A);
+			if (!this.ship.isDestroyed()) {
+				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+						|| inputManager.isKeyDown(KeyEvent.VK_D);
+				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+						|| inputManager.isKeyDown(KeyEvent.VK_A);
 
-        boolean isRightBorder = this.ship.getPositionX()
-            + this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-        boolean isLeftBorder = this.ship.getPositionX()
-            - this.ship.getSpeed() < 1;
+				boolean isRightBorder = this.ship.getPositionX()
+						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+				boolean isLeftBorder = this.ship.getPositionX()
+						- this.ship.getSpeed() < 1;
 
-        if (moveRight && !isRightBorder) {
-          this.ship.moveRight();
-        }
-        if (moveLeft && !isLeftBorder) {
-          this.ship.moveLeft();
-        }
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-					if (this.ship.shoot(this.bullets)) {
+				if (moveRight && !isRightBorder) {
+					this.ship.moveRight();
+				}
+				if (moveLeft && !isLeftBorder) {
+					this.ship.moveLeft();
+				}
+				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+					if (this.ship.shoot(this.bullets))
 						this.bulletsShot++;
-					}
-				}
-      }
+			}
 
-      if (this.enemyShipSpecial != null) {
-				if (!this.enemyShipSpecial.isDestroyed()) {
+			if (this.enemyShipSpecial != null) {
+				if (!this.enemyShipSpecial.isDestroyed())
 					this.enemyShipSpecial.move(2, 0);
-				} else if (this.enemyShipSpecialExplosionCooldown.checkFinished()) {
+				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
 					this.enemyShipSpecial = null;
-				}
 
-      }
-      if (this.enemyShipSpecial == null
-          && this.enemyShipSpecialCooldown.checkFinished()) {
-        this.enemyShipSpecial = new EnemyShip();
-        this.enemyShipSpecialCooldown.reset();
-        this.logger.info("A special ship appears");
-      }
-      if (this.enemyShipSpecial != null
-          && this.enemyShipSpecial.getPositionX() > this.width) {
-        this.enemyShipSpecial = null;
-        this.logger.info("The special ship has escaped");
-      }
+			}
+			if (this.enemyShipSpecial == null
+					&& this.enemyShipSpecialCooldown.checkFinished()) {
+				this.enemyShipSpecial = new EnemyShip();
+				this.enemyShipSpecialCooldown.reset();
+				this.logger.info("A special ship appears");
+			}
+			if (this.enemyShipSpecial != null
+					&& this.enemyShipSpecial.getPositionX() > this.width) {
+				this.enemyShipSpecial = null;
+				this.logger.info("The special ship has escaped");
+			}
 
       this.ship.update();
       this.enemyShipFormation.update();
@@ -374,13 +372,12 @@ public class GameScreen extends Screen {
     for (Bullet bullet : this.bullets) {
       bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
-					|| bullet.getPositionY() > this.height) {
+					|| bullet.getPositionY() > this.height)
 				recyclable.add(bullet);
-			}
-    }
-    this.bullets.removeAll(recyclable);
-    BulletPool.recycle(recyclable);
-  }
+		}
+		this.bullets.removeAll(recyclable);
+		BulletPool.recycle(recyclable);
+	}
 
   private void cleanTurningBullets() {
     Set<Bullet> recyclableTurning = new HashSet<Bullet>();
