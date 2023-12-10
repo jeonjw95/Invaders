@@ -65,7 +65,6 @@ public class Bullet extends Entity {
 	public final void turnLeft() {
 		this.positionX += this.speedX;
 		this.positionY += this.speedY;
-		System.out.println("Left <X : " + this.speedX + ", Y: " + this.speedY + ">");
 		if(this.speedX > -6 && !this.firstTouchX) this.speedX -= 1;
 		else if(this.speedX == -6 && !this.firstTouchX) this.firstTouchX = true;
 		else this.speedX += 1;
@@ -77,7 +76,6 @@ public class Bullet extends Entity {
 	public final void turnRight() {
 		this.positionX -= this.speedX;
 		this.positionY += this.speedY;
-		System.out.println("Right <X : " + this.speedX + ", Y: " + this.speedY + ">");
 		if (this.speedX > -6 && !this.firstTouchX)
 			this.speedX -= 1;
 		else if (this.speedX == -6 && !this.firstTouchX)
@@ -112,11 +110,6 @@ public class Bullet extends Entity {
 		return this.speedY;
 	}
 
-	/**
-	 * Getter for the speed of the bullet.
-	 *
-	 * @return Speed of the bullet.
-	 */
 	public final void setFirstTouchX () {
 		this.firstTouchX = false;
 	}
